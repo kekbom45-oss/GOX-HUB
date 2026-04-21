@@ -1,7 +1,8 @@
 --[[
-    BAMBOO BOLT-X: ULTIMATE EDITION
-    Created by: Bamboo_3NgU
-    Features: X to Minimize, Custom Kick Script, External Warp, ESP, Anti-Kick
+    MM2 BY GOX HUB - OFFICIAL FREE VERSION
+    - X = ปิดสคริปต์ถาวร
+    - ⬜ = ย่อเมนูเป็นวงกลม MM2 สายรุ้ง
+    - Intro: Rainbow Title & Click to Start
 ]]
 
 local Players = game:GetService("Players")
@@ -9,17 +10,16 @@ local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- [0] Setup & Anti-Duplicate
-if playerGui:FindFirstChild("Bamboo_Final_UI") then
-    playerGui:FindFirstChild("Bamboo_Final_UI"):Destroy()
+-- [0] Setup UI
+if playerGui:FindFirstChild("GoxHub_MM2_UI") then
+    playerGui:FindFirstChild("GoxHub_MM2_UI"):Destroy()
 end
 
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "Bamboo_Final_UI"
-screenGui.Parent = playerGui
+local screenGui = Instance.new("ScreenGui", playerGui)
+screenGui.Name = "GoxHub_MM2_UI"
 screenGui.ResetOnSpawn = false
 
--- ระบบสีรุ้ง (Rainbow System)
+-- ระบบสีรุ้ง (Rainbow)
 local function applyRainbow(object)
     task.spawn(function()
         local hue = 0
@@ -27,114 +27,147 @@ local function applyRainbow(object)
             hue = hue + (1/400)
             if hue > 1 then hue = 0 end
             local color = Color3.fromHSV(hue, 0.7, 1)
-            if object:IsA("TextLabel") then
+            if object:IsA("TextLabel") or object:IsA("TextButton") then 
                 object.TextColor3 = color
-            elseif object:IsA("UIStroke") then
-                object.Color = color
+            elseif object:IsA("UIStroke") then 
+                object.Color = color 
             end
             task.wait()
         end
     end)
 end
 
--- [1] INTRO ANIMATIONS
-local introLabel = Instance.new("TextLabel", screenGui)
-introLabel.Size = UDim2.new(0, 400, 0, 100); introLabel.Position = UDim2.new(0.5, -200, 0.4, 0);
-introLabel.BackgroundTransparency = 1; introLabel.Text = "MM2"; introLabel.TextSize = 1;
-introLabel.Font = Enum.Font.LuckiestGuy; introLabel.TextTransparency = 1; applyRainbow(introLabel)
-TweenService:Create(introLabel, TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {TextSize = 120, TextTransparency = 0}):Play()
-task.wait(1.8)
-TweenService:Create(introLabel, TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {TextSize = 250, TextTransparency = 1}):Play()
-task.wait(0.8); introLabel:Destroy()
+-- [1] INTRO SYSTEM (หน้าจอคลุมดำ)
+local introFrame = Instance.new("Frame", screenGui)
+introFrame.Size = UDim2.new(1, 0, 1, 0)
+introFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+introFrame.ZIndex = 10
 
--- [2] MAIN UI STRUCTURE
+local introTitle = Instance.new("TextLabel", introFrame)
+introTitle.Size = UDim2.new(0, 400, 0, 100)
+introTitle.Position = UDim2.new(0.5, -200, 0.4, 0)
+introTitle.BackgroundTransparency = 1
+introTitle.Text = "MM2 BY GOX HUB"
+introTitle.Font = Enum.Font.FredokaOne
+introTitle.TextSize = 50
+applyRainbow(introTitle)
+
+local startBtn = Instance.new("TextButton", introFrame)
+startBtn.Size = UDim2.new(0, 200, 0, 50)
+startBtn.Position = UDim2.new(0.5, -100, 0.6, 0)
+startBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+startBtn.Text = "กดเพื่อไปต่อ"
+startBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+startBtn.Font = Enum.Font.GothamBold
+startBtn.TextSize = 18
+Instance.new("UICorner", startBtn)
+
+-- [2] MAIN UI (แนวนอน)
 local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 300, 0, 450)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -225)
+mainFrame.Size = UDim2.new(0, 550, 0, 160)
+mainFrame.Position = UDim2.new(0.5, -275, 0.8, -80)
 mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+mainFrame.Visible = false -- ซ่อนไว้ก่อนกด Start
 mainFrame.Active = true; mainFrame.Draggable = true
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 15)
-local mainStroke = Instance.new("UIStroke", mainFrame); mainStroke.Thickness = 3; applyRainbow(mainStroke)
+local mainStroke = Instance.new("UIStroke", mainFrame); mainStroke.Thickness = 2; applyRainbow(mainStroke)
 
--- [Open Button] ปุ่มวงกลมตอนย่อเมนู
-local openBtn = Instance.new("TextButton", screenGui)
-openBtn.Size = UDim2.new(0, 50, 0, 50); openBtn.Position = UDim2.new(0, 20, 0.5, -25)
-openBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20); openBtn.Text = "B"; openBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-openBtn.Font = Enum.Font.FredokaOne; openBtn.TextSize = 25; openBtn.Visible = false
-Instance.new("UICorner", openBtn).CornerRadius = UDim.new(1, 0)
-local openStroke = Instance.new("UIStroke", openBtn); openStroke.Thickness = 2; applyRainbow(openStroke)
+-- ข้อความซ้ายบนของเมนู
+local menuTitle = Instance.new("TextLabel", mainFrame)
+menuTitle.Text = "Mm2 by gox hub"
+menuTitle.Size = UDim2.new(0, 200, 0, 25)
+menuTitle.Position = UDim2.new(0, 15, 0, 10)
+menuTitle.BackgroundTransparency = 1
+menuTitle.Font = Enum.Font.FredokaOne
+menuTitle.TextSize = 18
+menuTitle.TextXAlignment = Enum.TextXAlignment.Left
+applyRainbow(menuTitle)
 
-local function toggleMinimize(state)
-    mainFrame.Visible = not state
-    openBtn.Visible = state
-end
+local subTitle = Instance.new("TextLabel", mainFrame)
+subTitle.Text = "แจกฟรีไม่ได้ขายต่อ"
+subTitle.Size = UDim2.new(0, 200, 0, 15)
+subTitle.Position = UDim2.new(0, 15, 0, 30)
+subTitle.BackgroundTransparency = 1
+subTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+subTitle.Font = Enum.Font.Gotham
+subTitle.TextSize = 10
+subTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-openBtn.MouseButton1Click:Connect(function() toggleMinimize(false) end)
+-- [Control Buttons]
+local miniBtn = Instance.new("TextButton", screenGui) -- วงกลม MM2 สายรุ้ง
+miniBtn.Size = UDim2.new(0, 65, 0, 65); miniBtn.Position = UDim2.new(0, 20, 0.5, -32)
+miniBtn.BackgroundColor3 = Color3.fromRGB(10, 10, 10); miniBtn.Text = "MM2"
+miniBtn.Font = Enum.Font.FredokaOne; miniBtn.TextSize = 22; miniBtn.Visible = false
+Instance.new("UICorner", miniBtn).CornerRadius = UDim.new(1, 0)
+applyRainbow(miniBtn)
 
--- [X] ปุ่มขวาบน สำหรับย่อเมนู
-local closeBtn = Instance.new("TextButton", mainFrame)
-closeBtn.Size = UDim2.new(0, 35, 0, 35); closeBtn.Position = UDim2.new(1, -40, 0, 5)
-closeBtn.BackgroundColor3 = Color3.fromRGB(40, 10, 10); closeBtn.Text = "X"
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255); closeBtn.Font = Enum.Font.GothamBold; closeBtn.TextSize = 18
-Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 8)
-closeBtn.MouseButton1Click:Connect(function() toggleMinimize(true) end)
+local closeBtn = Instance.new("TextButton", mainFrame) -- X ปิด
+closeBtn.Size = UDim2.new(0, 30, 0, 30); closeBtn.Position = UDim2.new(1, -40, 0, 10)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0); closeBtn.Text = "X"; closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", closeBtn)
 
-local title = Instance.new("TextLabel", mainFrame)
-title.Text = "BAMBOO BOLT-X"; title.Size = UDim2.new(1, -50, 0, 50); title.Position = UDim2.new(0, 15, 0, 0);
-title.BackgroundTransparency = 1; title.Font = Enum.Font.FredokaOne; title.TextSize = 22; applyRainbow(title); title.TextXAlignment = Enum.TextXAlignment.Left
+local miniHeaderBtn = Instance.new("TextButton", mainFrame) -- ⬜ ย่อ
+miniHeaderBtn.Size = UDim2.new(0, 30, 0, 30); miniHeaderBtn.Position = UDim2.new(1, -80, 0, 10)
+miniHeaderBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50); miniHeaderBtn.Text = "⬜"; miniHeaderBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", miniHeaderBtn)
 
+-- Logic กดยืนยัน Intro
+startBtn.MouseButton1Click:Connect(function()
+    introFrame:Destroy()
+    mainFrame.Visible = true
+end)
+
+closeBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
+miniHeaderBtn.MouseButton1Click:Connect(function() mainFrame.Visible = false; miniBtn.Visible = true end)
+miniBtn.MouseButton1Click:Connect(function() mainFrame.Visible = true; miniBtn.Visible = false end)
+
+-- [3] FUNCTIONS LIST
 local scroll = Instance.new("ScrollingFrame", mainFrame)
 scroll.Size = UDim2.new(1, -20, 1, -70); scroll.Position = UDim2.new(0, 10, 0, 60)
-scroll.BackgroundTransparency = 1; scroll.ScrollBarThickness = 0; scroll.CanvasSize = UDim2.new(0, 0, 0, 550)
-local layout = Instance.new("UIListLayout", scroll); layout.Padding = UDim.new(0, 10)
+scroll.BackgroundTransparency = 1; scroll.ScrollBarThickness = 0; scroll.CanvasSize = UDim2.new(3, 0, 0, 0)
+local layout = Instance.new("UIListLayout", scroll); layout.FillDirection = Enum.FillDirection.Horizontal; layout.Padding = UDim.new(0, 10); layout.VerticalAlignment = Enum.VerticalAlignment.Center
 
 local function createBtn(text, color)
     local btn = Instance.new("TextButton", scroll)
-    btn.Size = UDim2.new(1, 0, 0, 50); btn.Text = text; btn.BackgroundColor3 = color;
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255); btn.Font = Enum.Font.GothamBold; btn.TextSize = 14;
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
+    btn.Size = UDim2.new(0, 140, 0, 80); btn.Text = text; btn.BackgroundColor3 = color; btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.GothamBold; btn.TextSize = 13; btn.TextWrapped = true; Instance.new("UICorner", btn)
     return btn
 end
 
--- [3] ฟังก์ชันหลัก
--- ปุ่มเตะผู้เล่น (รันสคริปต์จาก Pastebin)
-local kickBtn = createBtn("⭐ เตะผู้เล่นคนอื่น (Kick Script)", Color3.fromRGB(60, 20, 20))
-kickBtn.MouseButton1Click:Connect(function()
-    kickBtn.Text = "กำลังโหลดสคริปต์เตะ..."
+-- ฟังก์ชันทั้งหมด
+createBtn("⭐ เตะผู้เล่นอื่น\n(Pastebin)", Color3.fromRGB(80, 20, 20)).MouseButton1Click:Connect(function()
+    pcall(function() loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))() end)
+end)
+
+local invisActive = false
+local invisBtn = createBtn("👻 หายตัว (Invisibility)\n[OFF]", Color3.fromRGB(40, 40, 40))
+invisBtn.MouseButton1Click:Connect(function()
+    invisActive = not invisActive
+    invisBtn.Text = invisActive and "👻 หายตัว (Invisibility)\n[ON]" or "👻 หายตัว (Invisibility)\n[OFF]"
     task.spawn(function()
-        local success, err = pcall(function()
-            loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))()
-        end)
-        if success then
-            kickBtn.Text = "รันสคริปต์สำเร็จ!"
-        else
-            kickBtn.Text = "โหลดล้มเหลว!"
-            warn("Kick Script Error: " .. tostring(err))
+        while invisActive do
+            if player.Character then
+                for _, v in pairs(player.Character:GetDescendants()) do
+                    if (v:IsA("BasePart") or v:IsA("Decal")) and v.Name ~= "HumanoidRootPart" then v.Transparency = 1 end
+                end
+            end
+            task.wait(0.2)
         end
-        task.wait(2)
-        kickBtn.Text = "⭐ เตะผู้เล่นคนอื่น (Kick Script)"
+        if player.Character then
+            for _, v in pairs(player.Character:GetDescendants()) do
+                if (v:IsA("BasePart") or v:IsA("Decal")) and v.Name ~= "HumanoidRootPart" then v.Transparency = 0 end
+            end
+        end
     end)
 end)
 
-local warpBtn = createBtn("🌀 เปิดระบบวาร์ป (External)", Color3.fromRGB(0, 50, 100))
-warpBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/kekbom45-oss/GOX-HUB/main/Wa.lua"))()
+createBtn("🌀 ระบบวาร์ป\n(GitHub)", Color3.fromRGB(0, 50, 100)).MouseButton1Click:Connect(function()
+    pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kekbom45-oss/GOX-HUB/main/Wa.lua"))() end)
 end)
 
-local aimBtn = createBtn("🎯 ล็อกเป้าหัว (Silent Aim)", Color3.fromRGB(30, 30, 30))
-local espBtn = createBtn("👁️ ส่องบทบาท (ESP)", Color3.fromRGB(30, 30, 30))
-local akBtn = createBtn("🛡️ กันโดนเตะ (Anti-Kick)", Color3.fromRGB(30, 30, 30))
+createBtn("👁️ ESP Roles", Color3.fromRGB(40, 40, 40))
+createBtn("🎯 Silent Aim", Color3.fromRGB(40, 40, 40))
+createBtn("🛡️ Anti-Troll Kick\n(Active)", Color3.fromRGB(0, 80, 50))
 
-local exitBtn = createBtn("❌ ปิดสคริปต์ถาวร", Color3.fromRGB(10, 10, 10))
-exitBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
-
--- [4] ระบบกันโดนเตะ (Auto Active)
-local mt = getrawmetatable(game)
-setreadonly(mt, false)
-local old = mt.__namecall
-mt.__namecall = newcclosure(function(self, ...)
-    local method = getnamecallmethod()
-    if method == "Kick" or method == "kick" then return nil end
-    return old(self, ...)
-end)
-setreadonly(mt, true)
+-- [4] ระบบกันเตะเบื้องต้น
+hookfunction(player.Kick, function() return nil end)
