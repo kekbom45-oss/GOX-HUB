@@ -20,7 +20,34 @@ screenGui.Name = "Bamboo_BoltX_UI"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 
--- ระบบสีรุ้ง (Rainbow System)
+-- ระบบแจ้งเตือน (Notification)
+local function notify(title, text, duration)
+    local notifFrame = Instance.new("Frame", screenGui)
+    notifFrame.Size = UDim2.new(0, 250, 0, 60)
+    notifFrame.Position = UDim2.new(1, 10, 0.8, 0)
+    notifFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    notifFrame.BorderSizePixel = 0
+    Instance.new("UICorner", notifFrame).CornerRadius = UDim.new(0, 10)
+    local stroke = Instance.new("UIStroke", notifFrame)
+    stroke.Thickness = 2
+    stroke.Color = Color3.fromRGB(0, 255, 150)
+
+    local t = Instance.new("TextLabel", notifFrame)
+    t.Text = title; t.Size = UDim2.new(1, 0, 0, 25); t.BackgroundTransparency = 1;
+    t.TextColor3 = Color3.fromRGB(0, 255, 150); t.Font = Enum.Font.GothamBold; t.TextSize = 14
+
+    local d = Instance.new("TextLabel", notifFrame)
+    d.Text = text; d.Size = UDim2.new(1, 0, 0, 30); d.Position = UDim2.new(0, 0, 0, 25); d.BackgroundTransparency = 1;
+    d.TextColor3 = Color3.fromRGB(255, 255, 255); d.Font = Enum.Font.Gotham; d.TextSize = 12
+
+    notifFrame:TweenPosition(UDim2.new(1, -260, 0.8, 0), "Out", "Quart", 0.5, true)
+    task.delay(duration or 3, function()
+        notifFrame:TweenPosition(UDim2.new(1, 10, 0.8, 0), "In", "Quart", 0.5, true)
+        task.wait(0.5); notifFrame:Destroy()
+    end)
+end
+
+-- ระบบสีรุ้ง
 local function applyRainbow(object)
     task.spawn(function()
         local hue = 0
@@ -38,193 +65,150 @@ local function applyRainbow(object)
     end)
 end
 
--- [1] Intro Animation
-local introLabel = Instance.new("TextLabel")
-introLabel.Size = UDim2.new(0, 400, 0, 100)
-introLabel.Position = UDim2.new(0.5, -200, 0.4, 0)
-introLabel.BackgroundTransparency = 1
-introLabel.Text = "MM2"
-introLabel.TextSize = 1
-introLabel.Font = Enum.Font.LuckiestGuy
-introLabel.TextTransparency = 1
-introLabel.Parent = screenGui
-applyRainbow(introLabel)
-
-TweenService:Create(introLabel, TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {TextSize = 120, TextTransparency = 0}):Play()
-task.wait(1.8)
-TweenService:Create(introLabel, TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {TextSize = 250, TextTransparency = 1}):Play()
-task.wait(0.8)
-introLabel:Destroy()
-
--- [2] Loading Bar
-local loadFrame = Instance.new("Frame")
-loadFrame.Size = UDim2.new(0, 300, 0, 8)
-loadFrame.Position = UDim2.new(0.5, -150, 0.5, 0)
-loadFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-loadFrame.BorderSizePixel = 0
-loadFrame.Parent = screenGui
-Instance.new("UICorner", loadFrame).CornerRadius = UDim.new(1, 0)
-
-local bar = Instance.new("Frame")
-bar.Size = UDim2.new(0, 0, 1, 0)
-bar.BackgroundColor3 = Color3.fromRGB(0, 255, 120)
-bar.Parent = loadFrame
-Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
-
-bar:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quart", 2, true)
-task.wait(2.2)
-loadFrame:Destroy()
-
--- [3] Ready Alert (Red Explosion)
-local readyLabel = Instance.new("TextLabel")
-readyLabel.Size = UDim2.new(0, 400, 0, 50)
-readyLabel.Position = UDim2.new(0.5, -200, 0.5, -25)
-readyLabel.BackgroundTransparency = 1
-readyLabel.Text = "ระบบพร้อมแล้ว"
-readyLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-readyLabel.TextSize = 50
-readyLabel.Font = Enum.Font.GothamBold
-readyLabel.Parent = screenGui
-
-task.wait(1)
-TweenService:Create(readyLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {
-    Size = UDim2.new(0, 1200, 0, 300), 
-    Position = UDim2.new(0.5, -600, 0.5, -150), 
-    TextTransparency = 1
-}):Play()
-task.wait(1)
-readyLabel:Destroy()
-
--- [4] Main UI Design (ชื่อใหม่: BOLT-X)
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 280, 0, 380)
-mainFrame.Position = UDim2.new(0.5, -140, 0.5, -190)
+-- [Main UI]
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0, 280, 0, 440) 
+mainFrame.Position = UDim2.new(0.5, -140, 0.5, -220)
 mainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-mainFrame.BorderSizePixel = 0
-mainFrame.ClipsDescendants = true
-mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Parent = screenGui
+mainFrame.Active = true; mainFrame.Draggable = true;
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 20)
+local mainStroke = Instance.new("UIStroke", mainFrame)
+mainStroke.Thickness = 3
+applyRainbow(mainStroke)
 
-local uiCorner = Instance.new("UICorner")
-uiCorner.CornerRadius = UDim.new(0, 20)
-uiCorner.Parent = mainFrame
+local title = Instance.new("TextLabel", mainFrame)
+title.Text = "BAMBOO BOLT-X"; title.Size = UDim2.new(1, 0, 0, 50); title.BackgroundTransparency = 1;
+title.Font = Enum.Font.FredokaOne; title.TextSize = 24; applyRainbow(title)
 
-local uiStroke = Instance.new("UIStroke")
-uiStroke.Thickness = 3
-uiStroke.Parent = mainFrame
-applyRainbow(uiStroke)
+local devName = Instance.new("TextLabel", mainFrame)
+devName.Text = "By Bamboo_3NgU"; devName.Position = UDim2.new(0, 0, 0, 42); devName.Size = UDim2.new(1, 0, 0, 20);
+devName.BackgroundTransparency = 1; devName.Font = Enum.Font.SourceSansBold; devName.TextSize = 14; applyRainbow(devName)
 
--- เอฟเฟกต์สายฟ้า
-task.spawn(function()
-    while mainFrame and mainFrame.Parent do
-        task.wait(math.random(4, 10))
-        uiStroke.Color = Color3.fromRGB(255, 255, 255)
-        uiStroke.Thickness = 6
-        task.wait(0.1)
-        uiStroke.Thickness = 3
-    end
-end)
+local container = Instance.new("ScrollingFrame", mainFrame)
+container.Size = UDim2.new(1, -20, 1, -80); container.Position = UDim2.new(0, 10, 0, 70);
+container.BackgroundTransparency = 1; container.ScrollBarThickness = 0;
+container.CanvasSize = UDim2.new(0, 0, 0, 450)
+Instance.new("UIListLayout", container).Padding = UDim.new(0, 10)
 
-local title = Instance.new("TextLabel")
-title.Text = "BAMBOO BOLT-X"
-title.Size = UDim2.new(1, 0, 0, 50)
-title.BackgroundTransparency = 1
-title.Font = Enum.Font.FredokaOne
-title.TextSize = 24
-title.Parent = mainFrame
-applyRainbow(title)
-
-local devName = Instance.new("TextLabel")
-devName.Text = "By Bamboo_3NgU"
-devName.Size = UDim2.new(1, 0, 0, 20)
-devName.Position = UDim2.new(0, 0, 0, 42)
-devName.BackgroundTransparency = 1
-devName.Font = Enum.Font.SourceSansBold
-devName.TextSize = 14
-devName.Parent = mainFrame
-applyRainbow(devName)
-
-local closeBtn = Instance.new("TextButton")
-closeBtn.Text = "X"
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -38, 0, 10)
-closeBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.Parent = mainFrame
-Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1, 0)
-
-local minimized = false
-closeBtn.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    mainFrame:TweenSize(minimized and UDim2.new(0, 280, 0, 50) or UDim2.new(0, 280, 0, 380), "Out", "Quart", 0.5, true)
-end)
-
-local container = Instance.new("Frame")
-container.Size = UDim2.new(1, -30, 0, 250)
-container.Position = UDim2.new(0, 15, 0, 80)
-container.BackgroundTransparency = 1
-container.Parent = mainFrame
-
-local layout = Instance.new("UIListLayout")
-layout.Padding = UDim.new(0, 12)
-layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-layout.Parent = container
-
--- ฟังก์ชัน 1: Warp
+-- [1] Auto Warp เกาะติด (Sticky Loop)
 local tpActive = false
-local tpBtn = Instance.new("TextButton")
-tpBtn.Size = UDim2.new(1, 0, 0, 50)
-tpBtn.Text = "Auto Warp: OFF"
-tpBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-tpBtn.Font = Enum.Font.GothamMedium
-tpBtn.Parent = container
+local tpBtn = Instance.new("TextButton", container)
+tpBtn.Size = UDim2.new(0.95, 0, 0, 50); tpBtn.Text = "Auto Warp: OFF";
+tpBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 12)
 
 tpBtn.MouseButton1Click:Connect(function()
     tpActive = not tpActive
     tpBtn.Text = tpActive and "Auto Warp: ON" or "Auto Warp: OFF"
     tpBtn.TextColor3 = tpActive and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 255, 255)
-    while tpActive do
-        for _, v in pairs(Players:GetPlayers()) do
-            if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and tpActive then
-                player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-                task.wait(0.2)
+    notify(tpActive and "ระบบทำงาน" or "ระบบปิด", tpActive and "เริ่มการวาร์ปเกาะติด" or "หยุดวาร์ปแล้ว")
+    
+    task.spawn(function()
+        while tpActive do
+            for _, v in pairs(Players:GetPlayers()) do
+                if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and tpActive then
+                    notify("Sticky Warp", "กำลังเกาะติด: " .. v.Name, 1.5)
+                    local start = tick()
+                    while tpActive and (tick() - start) < 5 do
+                        if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                            player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2.5)
+                        end
+                        task.wait(0.05)
+                    end
+                end
+                if not tpActive then break end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+-- [2] หายตัว (Invisibility Loop) - ปรับกลไกให้เหมือนฟังก์ชันแรก
+local invisibleActive = false
+local invBtn = Instance.new("TextButton", container)
+invBtn.Size = UDim2.new(0.95, 0, 0, 50); invBtn.Text = "Invisibility: OFF";
+invBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); invBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", invBtn).CornerRadius = UDim.new(0, 12)
+
+invBtn.MouseButton1Click:Connect(function()
+    invisibleActive = not invisibleActive
+    invBtn.Text = invisibleActive and "Invisibility: ON" or "Invisibility: OFF"
+    invBtn.TextColor3 = invisibleActive and Color3.fromRGB(255, 0, 255) or Color3.fromRGB(255, 255, 255)
+    notify(invisibleActive and "Invisibility" or "Invisibility", invisibleActive and "เปิดการใช้งานหายตัว" or "ปิดการใช้งานหายตัว")
+
+    task.spawn(function()
+        while invisibleActive do
+            local char = player.Character
+            if char then
+                for _, part in pairs(char:GetDescendants()) do
+                    if (part:IsA("BasePart") or part:IsA("Decal")) and part.Name ~= "HumanoidRootPart" then
+                        part.Transparency = 1
+                    end
+                end
+            end
+            task.wait(0.1) -- เช็คซ้ำเรื่อยๆ กันตัวละครกลับมาเห็น
+        end
+        -- เมื่อปิด ให้กลับมามองเห็น
+        if not invisibleActive and player.Character then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if (part:IsA("BasePart") or part:IsA("Decal")) and part.Name ~= "HumanoidRootPart" then
+                    part.Transparency = 0
+                end
             end
         end
-        task.wait(0.1)
+    end)
+end)
+
+-- [3] Anti-Fling
+local antiFlingActive = false
+local afBtn = Instance.new("TextButton", container)
+afBtn.Size = UDim2.new(0.95, 0, 0, 50); afBtn.Text = "Anti-Fling: OFF";
+afBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); afBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", afBtn).CornerRadius = UDim.new(0, 12)
+
+afBtn.MouseButton1Click:Connect(function()
+    antiFlingActive = not antiFlingActive
+    afBtn.Text = antiFlingActive and "Anti-Fling: ON" or "Anti-Fling: OFF"
+    afBtn.TextColor3 = antiFlingActive and Color3.fromRGB(0, 255, 255) or Color3.fromRGB(255, 255, 255)
+    notify("Anti-Fling", antiFlingActive and "เปิดใช้งานกันกระเด็น" or "ปิดใช้งานกันกระเด็น")
+    
+    task.spawn(function()
+        while antiFlingActive do
+            if player.Character then
+                for _, p in pairs(player.Character:GetDescendants()) do
+                    if p:IsA("BasePart") then p.Velocity = Vector3.new(0,0,0); p.RotVelocity = Vector3.new(0,0,0) end
+                end
+            end
+            RunService.Stepped:Wait()
+        end
+    end)
+end)
+
+-- [4] Extra Script (Toggle)
+local exActive = false
+local exBtn = Instance.new("TextButton", container)
+exBtn.Size = UDim2.new(0.95, 0, 0, 50); exBtn.Text = "Extra Script: OFF";
+exBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); exBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", exBtn).CornerRadius = UDim.new(0, 12)
+
+exBtn.MouseButton1Click:Connect(function()
+    exActive = not exActive
+    exBtn.Text = exActive and "Extra Script: ON" or "Extra Script: OFF"
+    notify("Extra Script", exActive and "รันสคริปต์ Pastebin..." or "ปิดการรันสคริปต์")
+    if exActive then 
+        loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))() 
     end
 end)
 
--- ฟังก์ชัน 2: รันสคริปต์ใหม่จากลิงก์ 8n5Ptfqn
-local runBtn = Instance.new("TextButton")
-runBtn.Size = UDim2.new(1, 0, 0, 50)
-runBtn.Text = "Run Updated Script"
-runBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-runBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-runBtn.Font = Enum.Font.GothamMedium
-runBtn.Parent = container
-Instance.new("UICorner", runBtn).CornerRadius = UDim.new(0, 12)
-
-runBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))()
-end)
-
--- ฟังก์ชัน 3: ปิดสคริปต์
-local exitBtn = Instance.new("TextButton")
-exitBtn.Size = UDim2.new(1, 0, 0, 50)
-exitBtn.Text = "Exit Script"
-exitBtn.BackgroundColor3 = Color3.fromRGB(45, 20, 20)
-exitBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-exitBtn.Font = Enum.Font.GothamMedium
-exitBtn.Parent = container
+-- [5] Exit
+local exitBtn = Instance.new("TextButton", container)
+exitBtn.Size = UDim2.new(0.95, 0, 0, 50); exitBtn.Text = "ปิดสคริปต์ (Exit)";
+exitBtn.BackgroundColor3 = Color3.fromRGB(45, 20, 20); exitBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
 Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 12)
 
 exitBtn.MouseButton1Click:Connect(function()
-    tpActive = false
+    notify("Exit", "ปิดการทำงาน BAMBOO BOLT-X")
+    tpActive = false; invisibleActive = false; antiFlingActive = false;
     mainFrame:TweenSize(UDim2.new(0, 280, 0, 0), "In", "Quart", 0.5, true)
-    task.wait(0.5)
-    screenGui:Destroy()
+    task.wait(0.5); screenGui:Destroy()
 end)
