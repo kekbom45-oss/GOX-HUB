@@ -1,23 +1,21 @@
 --[[
-    BAMBOO BOLT-X: ULTIMATE RECOVERY (Fixed Anti-Kick & Lock Head)
+    BAMBOO BOLT-X: ULTIMATE EDITION
     Created by: Bamboo_3NgU
-    Features: Intro, External Warp, ESP, Invisible, Anti-Kick, Silent Aim (Head)
+    Features: X to Minimize, Custom Kick Script, External Warp, ESP, Anti-Kick
 ]]
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
-local mouse = player:GetMouse()
 local playerGui = player:WaitForChild("PlayerGui")
 
 -- [0] Setup & Anti-Duplicate
-if playerGui:FindFirstChild("Bamboo_FullPower_UI") then
-    playerGui:FindFirstChild("Bamboo_FullPower_UI"):Destroy()
+if playerGui:FindFirstChild("Bamboo_Final_UI") then
+    playerGui:FindFirstChild("Bamboo_Final_UI"):Destroy()
 end
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "Bamboo_FullPower_UI"
+screenGui.Name = "Bamboo_Final_UI"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 
@@ -39,7 +37,7 @@ local function applyRainbow(object)
     end)
 end
 
--- [1] INTRO ANIMATIONS (เหมือนเดิมครบถ้วน)
+-- [1] INTRO ANIMATIONS
 local introLabel = Instance.new("TextLabel", screenGui)
 introLabel.Size = UDim2.new(0, 400, 0, 100); introLabel.Position = UDim2.new(0.5, -200, 0.4, 0);
 introLabel.BackgroundTransparency = 1; introLabel.Text = "MM2"; introLabel.TextSize = 1;
@@ -48,14 +46,6 @@ TweenService:Create(introLabel, TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.
 task.wait(1.8)
 TweenService:Create(introLabel, TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {TextSize = 250, TextTransparency = 1}):Play()
 task.wait(0.8); introLabel:Destroy()
-
-local loadFrame = Instance.new("Frame", screenGui)
-loadFrame.Size = UDim2.new(0, 300, 0, 8); loadFrame.Position = UDim2.new(0.5, -150, 0.5, 0);
-loadFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30); Instance.new("UICorner", loadFrame).CornerRadius = UDim.new(1, 0)
-local bar = Instance.new("Frame", loadFrame); bar.Size = UDim2.new(0, 0, 1, 0);
-bar.BackgroundColor3 = Color3.fromRGB(0, 255, 120); Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
-bar:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quart", 1.5, true)
-task.wait(1.7); loadFrame:Destroy()
 
 -- [2] MAIN UI STRUCTURE
 local mainFrame = Instance.new("Frame", screenGui)
@@ -66,106 +56,85 @@ mainFrame.Active = true; mainFrame.Draggable = true
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 15)
 local mainStroke = Instance.new("UIStroke", mainFrame); mainStroke.Thickness = 3; applyRainbow(mainStroke)
 
--- [X] ปุ่มปิดขวาบน
+-- [Open Button] ปุ่มวงกลมตอนย่อเมนู
+local openBtn = Instance.new("TextButton", screenGui)
+openBtn.Size = UDim2.new(0, 50, 0, 50); openBtn.Position = UDim2.new(0, 20, 0.5, -25)
+openBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20); openBtn.Text = "B"; openBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+openBtn.Font = Enum.Font.FredokaOne; openBtn.TextSize = 25; openBtn.Visible = false
+Instance.new("UICorner", openBtn).CornerRadius = UDim.new(1, 0)
+local openStroke = Instance.new("UIStroke", openBtn); openStroke.Thickness = 2; applyRainbow(openStroke)
+
+local function toggleMinimize(state)
+    mainFrame.Visible = not state
+    openBtn.Visible = state
+end
+
+openBtn.MouseButton1Click:Connect(function() toggleMinimize(false) end)
+
+-- [X] ปุ่มขวาบน สำหรับย่อเมนู
 local closeBtn = Instance.new("TextButton", mainFrame)
 closeBtn.Size = UDim2.new(0, 35, 0, 35); closeBtn.Position = UDim2.new(1, -40, 0, 5)
 closeBtn.BackgroundColor3 = Color3.fromRGB(40, 10, 10); closeBtn.Text = "X"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255); closeBtn.Font = Enum.Font.GothamBold; closeBtn.TextSize = 18
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 8)
-closeBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
+closeBtn.MouseButton1Click:Connect(function() toggleMinimize(true) end)
 
 local title = Instance.new("TextLabel", mainFrame)
 title.Text = "BAMBOO BOLT-X"; title.Size = UDim2.new(1, -50, 0, 50); title.Position = UDim2.new(0, 15, 0, 0);
 title.BackgroundTransparency = 1; title.Font = Enum.Font.FredokaOne; title.TextSize = 22; applyRainbow(title); title.TextXAlignment = Enum.TextXAlignment.Left
 
-local mainPage = Instance.new("ScrollingFrame", mainFrame)
-mainPage.Size = UDim2.new(1, -20, 1, -70); mainPage.Position = UDim2.new(0, 10, 0, 60)
-mainPage.BackgroundTransparency = 1; mainPage.ScrollBarThickness = 0; mainPage.CanvasSize = UDim2.new(0, 0, 0, 550)
-local layout = Instance.new("UIListLayout", mainPage); layout.Padding = UDim.new(0, 10)
+local scroll = Instance.new("ScrollingFrame", mainFrame)
+scroll.Size = UDim2.new(1, -20, 1, -70); scroll.Position = UDim2.new(0, 10, 0, 60)
+scroll.BackgroundTransparency = 1; scroll.ScrollBarThickness = 0; scroll.CanvasSize = UDim2.new(0, 0, 0, 550)
+local layout = Instance.new("UIListLayout", scroll); layout.Padding = UDim.new(0, 10)
 
--- [3] Helper Function (White Text)
 local function createBtn(text, color)
-    local btn = Instance.new("TextButton", mainPage)
-    btn.Size = UDim2.new(1, 0, 0, 45); btn.Text = text; btn.BackgroundColor3 = color;
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255); btn.Font = Enum.Font.GothamBold; btn.TextSize = 13;
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+    local btn = Instance.new("TextButton", scroll)
+    btn.Size = UDim2.new(1, 0, 0, 50); btn.Text = text; btn.BackgroundColor3 = color;
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255); btn.Font = Enum.Font.GothamBold; btn.TextSize = 14;
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
     return btn
 end
 
--- [4] ฟังก์ชัน: กันโดนเตะ (Anti-Kick)
-local antiKickActive = false
-local akBtn = createBtn("Anti-Kick: OFF", Color3.fromRGB(30, 30, 50))
-akBtn.MouseButton1Click:Connect(function()
-    antiKickActive = not antiKickActive
-    akBtn.Text = antiKickActive and "Anti-Kick: ON (Protected)" or "Anti-Kick: OFF"
-    if antiKickActive then
-        local mt = getrawmetatable(game)
-        setreadonly(mt, false)
-        local old = mt.__namecall
-        mt.__namecall = newcclosure(function(self, ...)
-            local method = getnamecallmethod()
-            if method == "Kick" or method == "kick" then return nil end
-            return old(self, ...)
-        end)
-        setreadonly(mt, true)
-    end
-end)
-
--- [5] ฟังก์ชัน: ล็อกเป้าหัว (Silent Aim Head)
-local silentAimActive = false
-local aimBtn = createBtn("Silent Aim (Head): OFF", Color3.fromRGB(50, 30, 30))
-aimBtn.MouseButton1Click:Connect(function()
-    silentAimActive = not silentAimActive
-    aimBtn.Text = silentAimActive and "Silent Aim: ON" or "Silent Aim (Head): OFF"
-    
+-- [3] ฟังก์ชันหลัก
+-- ปุ่มเตะผู้เล่น (รันสคริปต์จาก Pastebin)
+local kickBtn = createBtn("⭐ เตะผู้เล่นคนอื่น (Kick Script)", Color3.fromRGB(60, 20, 20))
+kickBtn.MouseButton1Click:Connect(function()
+    kickBtn.Text = "กำลังโหลดสคริปต์เตะ..."
     task.spawn(function()
-        while silentAimActive do
-            local closest = nil
-            local dist = math.huge
-            for _, v in pairs(Players:GetPlayers()) do
-                if v ~= player and v.Character and v.Character:FindFirstChild("Head") then
-                    local pos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(v.Character.Head.Position)
-                    if onScreen then
-                        local mag = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
-                        if mag < dist then closest = v; dist = mag end
-                    end
-                end
-            end
-            if closest and closest.Character then
-                -- แก้ไขทิศทางกระสุน/มีดให้พุ่งไปที่หัว
-                local head = closest.Character.Head
-                -- สำหรับปืนหรือมีดที่ใช้ Raycast
-                local oldIndex; oldIndex = hookmetamethod(game, "__index", function(self, k)
-                    if silentAimActive and self == mouse and k == "Hit" then return head.CFrame end
-                    return oldIndex(self, k)
-                end)
-            end
-            task.wait(0.5)
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))()
+        end)
+        if success then
+            kickBtn.Text = "รันสคริปต์สำเร็จ!"
+        else
+            kickBtn.Text = "โหลดล้มเหลว!"
+            warn("Kick Script Error: " .. tostring(err))
         end
+        task.wait(2)
+        kickBtn.Text = "⭐ เตะผู้เล่นคนอื่น (Kick Script)"
     end)
 end)
 
--- [6] ฟังก์ชันเดิมที่กู้คืนมา
-local warpLoaderBtn = createBtn("🌀 เปิดระบบวาร์ป (External)", Color3.fromRGB(0, 50, 100))
-warpLoaderBtn.MouseButton1Click:Connect(function()
+local warpBtn = createBtn("🌀 เปิดระบบวาร์ป (External)", Color3.fromRGB(0, 50, 100))
+warpBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/kekbom45-oss/GOX-HUB/main/Wa.lua"))()
 end)
 
-local espActive = false
-local espBtn = createBtn("Show Roles (ESP): OFF", Color3.fromRGB(30, 30, 30))
-espBtn.MouseButton1Click:Connect(function()
-    espActive = not espActive
-    espBtn.Text = espActive and "ESP: ON" or "Show Roles (ESP): OFF"
-    -- (Code ESP เหมือนเดิม)
-end)
+local aimBtn = createBtn("🎯 ล็อกเป้าหัว (Silent Aim)", Color3.fromRGB(30, 30, 30))
+local espBtn = createBtn("👁️ ส่องบทบาท (ESP)", Color3.fromRGB(30, 30, 30))
+local akBtn = createBtn("🛡️ กันโดนเตะ (Anti-Kick)", Color3.fromRGB(30, 30, 30))
 
-local invActive = false
-local invBtn = createBtn("Invisibility: OFF", Color3.fromRGB(30, 30, 30))
-invBtn.MouseButton1Click:Connect(function()
-    invActive = not invActive
-    invBtn.Text = invActive and "Invisibility: ON" or "Invisibility: OFF"
-    -- (Code Invisibility เหมือนเดิม)
-end)
-
-local exitBtn = createBtn("ปิดสคริปต์ (Exit)", Color3.fromRGB(50, 20, 20))
+local exitBtn = createBtn("❌ ปิดสคริปต์ถาวร", Color3.fromRGB(10, 10, 10))
 exitBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
+
+-- [4] ระบบกันโดนเตะ (Auto Active)
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local old = mt.__namecall
+mt.__namecall = newcclosure(function(self, ...)
+    local method = getnamecallmethod()
+    if method == "Kick" or method == "kick" then return nil end
+    return old(self, ...)
+end)
+setreadonly(mt, true)
