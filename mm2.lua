@@ -1,5 +1,6 @@
 --[[
-    MM2 PREMIUM SCRIPT (GOX-HUB Edition)
+    MM2 PREMIUM SCRIPT (GOX-HUB)
+    Created by: Bamboo_3NgU
     GitHub: https://github.com/kekbom45-oss/GOX-HUB
 ]]
 
@@ -9,7 +10,7 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- ล้าง UI เก่าป้องกันการซ้อนทับ
+-- [0] Setup & Anti-Duplicate
 if playerGui:FindFirstChild("MM2_Premium_UI") then
     playerGui:FindFirstChild("MM2_Premium_UI"):Destroy()
 end
@@ -37,43 +38,45 @@ local function applyRainbow(object)
     end)
 end
 
--- [1] Intro: MM2 Rainbow Fade Out
+-- [1] Intro Animation: MM2 Rainbow Text
 local introLabel = Instance.new("TextLabel")
 introLabel.Size = UDim2.new(0, 400, 0, 100)
 introLabel.Position = UDim2.new(0.5, -200, 0.4, 0)
 introLabel.BackgroundTransparency = 1
 introLabel.Text = "MM2"
-introLabel.TextSize = 100
+introLabel.TextSize = 1
 introLabel.Font = Enum.Font.LuckiestGuy
+introLabel.TextTransparency = 1
 introLabel.Parent = screenGui
 applyRainbow(introLabel)
 
-task.wait(1.5)
-TweenService:Create(introLabel, TweenInfo.new(1.5), {TextTransparency = 1}):Play()
-task.wait(1.5)
+TweenService:Create(introLabel, TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {TextSize = 120, TextTransparency = 0}):Play()
+task.wait(1.8)
+TweenService:Create(introLabel, TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {TextSize = 250, TextTransparency = 1}):Play()
+task.wait(0.8)
 introLabel:Destroy()
 
 -- [2] Loading Bar: Green Download
 local loadFrame = Instance.new("Frame")
-loadFrame.Size = UDim2.new(0, 300, 0, 10)
+loadFrame.Size = UDim2.new(0, 300, 0, 8)
 loadFrame.Position = UDim2.new(0.5, -150, 0.5, 0)
 loadFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 loadFrame.BorderSizePixel = 0
 loadFrame.Parent = screenGui
+Instance.new("UICorner", loadFrame).CornerRadius = UDim.new(1, 0)
 
 local bar = Instance.new("Frame")
 bar.Size = UDim2.new(0, 0, 1, 0)
-bar.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+bar.BackgroundColor3 = Color3.fromRGB(0, 255, 120)
 bar.BorderSizePixel = 0
 bar.Parent = loadFrame
+Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 
-for i = 1, 100 do
-    bar.Size = UDim2.new(i/100, 0, 1, 0)
-    task.wait(0.02)
-end
+bar:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quart", 2, true)
+task.wait(2.2)
 loadFrame:Destroy()
 
--- [3] Ready Alert: Red & Explosion
+-- [3] Ready Alert: Red Explosion (3 Seconds Total)
 local readyLabel = Instance.new("TextLabel")
 readyLabel.Size = UDim2.new(0, 400, 0, 50)
 readyLabel.Position = UDim2.new(0.5, -200, 0.5, -25)
@@ -84,27 +87,28 @@ readyLabel.TextSize = 50
 readyLabel.Font = Enum.Font.GothamBold
 readyLabel.Parent = screenGui
 
-task.wait(0.5)
-TweenService:Create(readyLabel, TweenInfo.new(1.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-    Size = UDim2.new(0, 800, 0, 200),
-    Position = UDim2.new(0.5, -400, 0.5, -100),
+task.wait(1)
+TweenService:Create(readyLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {
+    Size = UDim2.new(0, 1200, 0, 300), 
+    Position = UDim2.new(0.5, -600, 0.5, -150), 
     TextTransparency = 1
 }):Play()
-task.wait(1.5)
+task.wait(1)
 readyLabel:Destroy()
 
--- [4] Main UI: Elegant Design
+-- [4] Main UI Design & Lightning Effect
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 280, 0, 350)
-mainFrame.Position = UDim2.new(0.5, -140, 0.5, -175)
+mainFrame.Size = UDim2.new(0, 280, 0, 380)
+mainFrame.Position = UDim2.new(0.5, -140, 0.5, -190)
 mainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
 mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = screenGui
 
 local uiCorner = Instance.new("UICorner")
-uiCorner.CornerRadius = UDim.new(0, 15)
+uiCorner.CornerRadius = UDim.new(0, 20)
 uiCorner.Parent = mainFrame
 
 local uiStroke = Instance.new("UIStroke")
@@ -112,12 +116,12 @@ uiStroke.Thickness = 3
 uiStroke.Parent = mainFrame
 applyRainbow(uiStroke)
 
--- Lightning Effect (เอฟเฟกต์สายฟ้าตรงกรอบ)
+-- เอฟเฟกต์สายฟ้าตรงกรอบ
 task.spawn(function()
     while mainFrame and mainFrame.Parent do
-        task.wait(math.random(3, 8))
+        task.wait(math.random(4, 10))
         uiStroke.Color = Color3.fromRGB(255, 255, 255)
-        uiStroke.Thickness = 5
+        uiStroke.Thickness = 6
         task.wait(0.1)
         uiStroke.Thickness = 3
     end
@@ -128,16 +132,27 @@ title.Text = "MM2 PREMIUM HUB"
 title.Size = UDim2.new(1, 0, 0, 50)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.FredokaOne
-title.TextSize = 20
+title.TextSize = 22
 title.Parent = mainFrame
 applyRainbow(title)
 
--- Minimize Button (X)
+-- [Credit] ชื่อคนสร้าง Bamboo_3NgU
+local devName = Instance.new("TextLabel")
+devName.Text = "By Bamboo_3NgU"
+devName.Size = UDim2.new(1, 0, 0, 20)
+devName.Position = UDim2.new(0, 0, 0, 42)
+devName.BackgroundTransparency = 1
+devName.Font = Enum.Font.SourceSansBold
+devName.TextSize = 14
+devName.Parent = mainFrame
+applyRainbow(devName)
+
+-- ปุ่มย่อเมนู (X)
 local closeBtn = Instance.new("TextButton")
 closeBtn.Text = "X"
-closeBtn.Size = UDim2.new(0, 35, 0, 35)
-closeBtn.Position = UDim2.new(1, -40, 0, 8)
-closeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -38, 0, 10)
+closeBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.Parent = mainFrame
@@ -146,30 +161,36 @@ Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1, 0)
 local minimized = false
 closeBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
-    if minimized then
-        mainFrame:TweenSize(UDim2.new(0, 280, 0, 50), "Out", "Back", 0.5, true)
-    else
-        mainFrame:TweenSize(UDim2.new(0, 280, 0, 350), "Out", "Back", 0.5, true)
-    end
+    mainFrame:TweenSize(minimized and UDim2.new(0, 280, 0, 50) or UDim2.new(0, 280, 0, 380), "Out", "Quart", 0.5, true)
 end)
 
--- ฟังก์ชัน 1: Warp Loop
+-- ปุ่มฟังก์ชันต่างๆ
+local container = Instance.new("Frame")
+container.Size = UDim2.new(1, -30, 0, 250)
+container.Position = UDim2.new(0, 15, 0, 80)
+container.BackgroundTransparency = 1
+container.Parent = mainFrame
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 12)
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.Parent = container
+
+-- ฟังก์ชันที่ 1: Auto Warp
 local tpActive = false
 local tpBtn = Instance.new("TextButton")
-tpBtn.Size = UDim2.new(0.9, 0, 0, 50)
-tpBtn.Position = UDim2.new(0.05, 0, 0.25, 0)
+tpBtn.Size = UDim2.new(1, 0, 0, 50)
 tpBtn.Text = "Auto Warp: OFF"
-tpBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+tpBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpBtn.Font = Enum.Font.GothamMedium
-tpBtn.Parent = mainFrame
-Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 10)
+tpBtn.Parent = container
+Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 12)
 
 tpBtn.MouseButton1Click:Connect(function()
     tpActive = not tpActive
     tpBtn.Text = tpActive and "Auto Warp: ON" or "Auto Warp: OFF"
     tpBtn.TextColor3 = tpActive and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 255, 255)
-    
     while tpActive do
         for _, v in pairs(Players:GetPlayers()) do
             if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and tpActive then
@@ -181,17 +202,34 @@ tpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- ฟังก์ชัน 2: Run Pastebin Script (อัปเดตแล้ว)
+-- ฟังก์ชันที่ 2: รันสคริปต์จาก Pastebin (ตามที่คุณระบุ)
 local runBtn = Instance.new("TextButton")
-runBtn.Size = UDim2.new(0.9, 0, 0, 50)
-runBtn.Position = UDim2.new(0.05, 0, 0.45, 0)
+runBtn.Size = UDim2.new(1, 0, 0, 50)
 runBtn.Text = "Execute External Script"
-runBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+runBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 runBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 runBtn.Font = Enum.Font.GothamMedium
-runBtn.Parent = mainFrame
-Instance.new("UICorner", runBtn).CornerRadius = UDim.new(0, 10)
+runBtn.Parent = container
+Instance.new("UICorner", runBtn).CornerRadius = UDim.new(0, 12)
 
 runBtn.MouseButton1Click:Connect(function()
+    -- รันสคริปต์ตามที่คุณต้องการ
     loadstring(game:HttpGet("https://pastebin.com/raw/sY1Y3TpH"))()
+end)
+
+-- ฟังก์ชันที่ 3: ปิดสคริปต์
+local exitBtn = Instance.new("TextButton")
+exitBtn.Size = UDim2.new(1, 0, 0, 50)
+exitBtn.Text = "Exit Script"
+exitBtn.BackgroundColor3 = Color3.fromRGB(45, 20, 20)
+exitBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+exitBtn.Font = Enum.Font.GothamMedium
+exitBtn.Parent = container
+Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 12)
+
+exitBtn.MouseButton1Click:Connect(function()
+    tpActive = false
+    mainFrame:TweenSize(UDim2.new(0, 280, 0, 0), "In", "Quart", 0.5, true)
+    task.wait(0.5)
+    screenGui:Destroy()
 end)
