@@ -2,6 +2,7 @@
     BAMBOO BOLT-X HUB (MM2 EDITION)
     Created by: Bamboo_3NgU
     GitHub: https://github.com/kekbom45-oss/GOX-HUB
+    **Update: Player Selector & Random Warp**
 ]]
 
 local Players = game:GetService("Players")
@@ -47,7 +48,7 @@ local function notify(title, text, duration)
     end)
 end
 
--- ระบบสีรุ้ง
+-- ระบบสีรุ้ง (Rainbow System)
 local function applyRainbow(object)
     task.spawn(function()
         local hue = 0
@@ -65,150 +66,187 @@ local function applyRainbow(object)
     end)
 end
 
--- [Main UI]
+-- [1] Intro Animations (MM2 Rainbow + Loading Bar + Ready Alert)
+local introLabel = Instance.new("TextLabel", screenGui)
+introLabel.Size = UDim2.new(0, 400, 0, 100); introLabel.Position = UDim2.new(0.5, -200, 0.4, 0);
+introLabel.BackgroundTransparency = 1; introLabel.Text = "MM2"; introLabel.TextSize = 1;
+introLabel.Font = Enum.Font.LuckiestGuy; introLabel.TextTransparency = 1; applyRainbow(introLabel)
+TweenService:Create(introLabel, TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {TextSize = 120, TextTransparency = 0}):Play()
+task.wait(1.8)
+TweenService:Create(introLabel, TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {TextSize = 250, TextTransparency = 1}):Play()
+task.wait(0.8); introLabel:Destroy()
+
+local loadFrame = Instance.new("Frame", screenGui)
+loadFrame.Size = UDim2.new(0, 300, 0, 8); loadFrame.Position = UDim2.new(0.5, -150, 0.5, 0);
+loadFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30); Instance.new("UICorner", loadFrame).CornerRadius = UDim.new(1, 0)
+local bar = Instance.new("Frame", loadFrame); bar.Size = UDim2.new(0, 0, 1, 0);
+bar.BackgroundColor3 = Color3.fromRGB(0, 255, 120); Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
+bar:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quart", 1.5, true)
+task.wait(1.7); loadFrame:Destroy()
+
+local readyLabel = Instance.new("TextLabel", screenGui)
+readyLabel.Text = "ระบบพร้อมแล้ว"; readyLabel.TextColor3 = Color3.fromRGB(255, 0, 0);
+readyLabel.TextSize = 50; readyLabel.Font = Enum.Font.GothamBold; readyLabel.Position = UDim2.new(0.5, -200, 0.5, -25);
+readyLabel.Size = UDim2.new(0, 400, 0, 50); readyLabel.BackgroundTransparency = 1;
+task.wait(0.2)
+TweenService:Create(readyLabel, TweenInfo.new(0.8, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {Size = UDim2.new(0, 1200, 0, 300), Position = UDim2.new(0.5, -600, 0.5, -150), TextTransparency = 1}):Play()
+task.wait(0.8); readyLabel:Destroy()
+
+-- [2] Main UI Design
 local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 280, 0, 440) 
-mainFrame.Position = UDim2.new(0.5, -140, 0.5, -220)
-mainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-mainFrame.Active = true; mainFrame.Draggable = true;
+mainFrame.Size = UDim2.new(0, 300, 0, 550) 
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -275)
+mainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10); mainFrame.Active = true; mainFrame.Draggable = true;
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 20)
-local mainStroke = Instance.new("UIStroke", mainFrame)
-mainStroke.Thickness = 3
-applyRainbow(mainStroke)
+local mainStroke = Instance.new("UIStroke", mainFrame); mainStroke.Thickness = 3; applyRainbow(mainStroke)
 
 local title = Instance.new("TextLabel", mainFrame)
 title.Text = "BAMBOO BOLT-X"; title.Size = UDim2.new(1, 0, 0, 50); title.BackgroundTransparency = 1;
 title.Font = Enum.Font.FredokaOne; title.TextSize = 24; applyRainbow(title)
 
-local devName = Instance.new("TextLabel", mainFrame)
-devName.Text = "By Bamboo_3NgU"; devName.Position = UDim2.new(0, 0, 0, 42); devName.Size = UDim2.new(1, 0, 0, 20);
-devName.BackgroundTransparency = 1; devName.Font = Enum.Font.SourceSansBold; devName.TextSize = 14; applyRainbow(devName)
-
 local container = Instance.new("ScrollingFrame", mainFrame)
-container.Size = UDim2.new(1, -20, 1, -80); container.Position = UDim2.new(0, 10, 0, 70);
-container.BackgroundTransparency = 1; container.ScrollBarThickness = 0;
-container.CanvasSize = UDim2.new(0, 0, 0, 450)
+container.Size = UDim2.new(1, -20, 1, -80); container.Position = UDim2.new(0, 10, 0, 65);
+container.BackgroundTransparency = 1; container.ScrollBarThickness = 0; container.CanvasSize = UDim2.new(0, 0, 0, 800)
 Instance.new("UIListLayout", container).Padding = UDim.new(0, 10)
 
--- [1] Auto Warp เกาะติด (Sticky Loop)
-local tpActive = false
-local tpBtn = Instance.new("TextButton", container)
-tpBtn.Size = UDim2.new(0.95, 0, 0, 50); tpBtn.Text = "Auto Warp: OFF";
-tpBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 12)
+-- [3] ระบบเลือกผู้เล่นเพื่อวาร์ป (Player Selector)
+local selectedPlayer = nil
+local warpActive = false
 
-tpBtn.MouseButton1Click:Connect(function()
-    tpActive = not tpActive
-    tpBtn.Text = tpActive and "Auto Warp: ON" or "Auto Warp: OFF"
-    tpBtn.TextColor3 = tpActive and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 255, 255)
-    notify(tpActive and "ระบบทำงาน" or "ระบบปิด", tpActive and "เริ่มการวาร์ปเกาะติด" or "หยุดวาร์ปแล้ว")
+local selectTitle = Instance.new("TextLabel", container)
+selectTitle.Size = UDim2.new(1, 0, 0, 20); selectTitle.Text = "--- เลือกผู้เล่นที่ต้องการวาร์ป ---";
+selectTitle.TextColor3 = Color3.fromRGB(200, 200, 200); selectTitle.BackgroundTransparency = 1; selectTitle.Font = Enum.Font.GothamBold; selectTitle.TextSize = 12
+
+local playerScroll = Instance.new("ScrollingFrame", container)
+playerScroll.Size = UDim2.new(0.95, 0, 0, 120); playerScroll.BackgroundColor3 = Color3.fromRGB(20, 20, 20);
+playerScroll.CanvasSize = UDim2.new(0, 0, 0, 0); playerScroll.ScrollBarThickness = 2;
+Instance.new("UICorner", playerScroll).CornerRadius = UDim.new(0, 8)
+local playerList = Instance.new("UIListLayout", playerScroll); playerList.Padding = UDim.new(0, 5)
+
+local function updatePlayerList()
+    for _, child in pairs(playerScroll:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= player then
+            local pBtn = Instance.new("TextButton", playerScroll)
+            pBtn.Size = UDim2.new(1, -5, 0, 30); pBtn.Text = v.DisplayName;
+            pBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30); pBtn.TextColor3 = Color3.fromRGB(255, 255, 255);
+            pBtn.Font = Enum.Font.Gotham; pBtn.TextSize = 12; Instance.new("UICorner", pBtn)
+            pBtn.MouseButton1Click:Connect(function()
+                selectedPlayer = v
+                notify("Target Selected", "คุณเลือกวาร์ปหา: " .. v.Name)
+            end)
+        end
+    end
+    playerScroll.CanvasSize = UDim2.new(0, 0, 0, playerList.AbsoluteContentSize.Y)
+end
+updatePlayerList()
+Players.PlayerAdded:Connect(updatePlayerList); Players.PlayerRemoving:Connect(updatePlayerList)
+
+-- [4] ปุ่มวาร์ปหาคนที่เลือก (Toggle)
+local warpBtn = Instance.new("TextButton", container)
+warpBtn.Size = UDim2.new(0.95, 0, 0, 45); warpBtn.Text = "Warp to Selected: OFF";
+warpBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35); warpBtn.TextColor3 = Color3.fromRGB(255, 255, 255);
+Instance.new("UICorner", warpBtn).CornerRadius = UDim.new(0, 12)
+
+warpBtn.MouseButton1Click:Connect(function()
+    if not selectedPlayer then notify("Error", "กรุณาเลือกผู้เล่นก่อน!"); return end
+    warpActive = not warpActive
+    warpBtn.Text = warpActive and "Warping: ON" or "Warp to Selected: OFF"
+    warpBtn.TextColor3 = warpActive and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 255, 255)
     
     task.spawn(function()
-        while tpActive do
-            for _, v in pairs(Players:GetPlayers()) do
-                if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and tpActive then
-                    notify("Sticky Warp", "กำลังเกาะติด: " .. v.Name, 1.5)
-                    local start = tick()
-                    while tpActive and (tick() - start) < 5 do
-                        if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                            player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2.5)
-                        end
-                        task.wait(0.05)
+        while warpActive and selectedPlayer and selectedPlayer.Parent do
+            if selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame = selectedPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2.5)
+            end
+            task.wait(0.01)
+        end
+    end)
+end)
+
+-- [5] ปุ่มสุ่มวาร์ป (Random Warp Toggle)
+local randomActive = false
+local randBtn = Instance.new("TextButton", container)
+randBtn.Size = UDim2.new(0.95, 0, 0, 45); randBtn.Text = "Random Warp (Cycle): OFF";
+randBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35); randBtn.TextColor3 = Color3.fromRGB(255, 255, 255);
+Instance.new("UICorner", randBtn).CornerRadius = UDim.new(0, 12)
+
+randBtn.MouseButton1Click:Connect(function()
+    randomActive = not randomActive
+    randBtn.Text = randomActive and "Random: ON" or "Random Warp (Cycle): OFF"
+    randBtn.TextColor3 = randomActive and Color3.fromRGB(255, 150, 0) or Color3.fromRGB(255, 255, 255)
+    
+    task.spawn(function()
+        while randomActive do
+            local allPlayers = Players:GetPlayers()
+            local target = allPlayers[math.random(1, #allPlayers)]
+            if target ~= player and target.Character then
+                notify("Random Warp", "กำลังไปหา: " .. target.Name, 1.5)
+                local start = tick()
+                while randomActive and (tick() - start) < 3 do -- เกาะคนละ 3 วินาทีแล้วเปลี่ยน
+                    if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                        player.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2.5)
                     end
+                    task.wait(0.05)
                 end
-                if not tpActive then break end
             end
             task.wait(0.1)
         end
     end)
 end)
 
--- [2] หายตัว (Invisibility Loop) - ปรับกลไกให้เหมือนฟังก์ชันแรก
-local invisibleActive = false
-local invBtn = Instance.new("TextButton", container)
-invBtn.Size = UDim2.new(0.95, 0, 0, 50); invBtn.Text = "Invisibility: OFF";
-invBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); invBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", invBtn).CornerRadius = UDim.new(0, 12)
-
-invBtn.MouseButton1Click:Connect(function()
-    invisibleActive = not invisibleActive
-    invBtn.Text = invisibleActive and "Invisibility: ON" or "Invisibility: OFF"
-    invBtn.TextColor3 = invisibleActive and Color3.fromRGB(255, 0, 255) or Color3.fromRGB(255, 255, 255)
-    notify(invisibleActive and "Invisibility" or "Invisibility", invisibleActive and "เปิดการใช้งานหายตัว" or "ปิดการใช้งานหายตัว")
-
+-- [6] ฟังก์ชันเดิม (ESP, Invisibility, Anti-Fling, Extra)
+local espBtn = Instance.new("TextButton", container); espBtn.Size = UDim2.new(0.95, 0, 0, 45); espBtn.Text = "Show Roles (ESP): OFF";
+espBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); Instance.new("UICorner", espBtn);
+local espActive = false
+espBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive; espBtn.Text = espActive and "ESP: ON" or "Show Roles (ESP): OFF"
     task.spawn(function()
-        while invisibleActive do
-            local char = player.Character
-            if char then
-                for _, part in pairs(char:GetDescendants()) do
-                    if (part:IsA("BasePart") or part:IsA("Decal")) and part.Name ~= "HumanoidRootPart" then
-                        part.Transparency = 1
-                    end
+        while espActive do
+            for _, v in pairs(Players:GetPlayers()) do
+                if v ~= player and v.Character then
+                    local roleColor = Color3.fromRGB(0, 255, 0)
+                    if v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife") then roleColor = Color3.fromRGB(255,0,0)
+                    elseif v.Backpack:FindFirstChild("Gun") or v.Character:FindFirstChild("Gun") then roleColor = Color3.fromRGB(0,0,255) end
+                    local h = v.Character:FindFirstChild("RoleESP") or Instance.new("Highlight", v.Character); h.Name = "RoleESP";
+                    h.FillColor = roleColor; h.OutlineColor = roleColor; h.Enabled = espActive
                 end
             end
-            task.wait(0.1) -- เช็คซ้ำเรื่อยๆ กันตัวละครกลับมาเห็น
-        end
-        -- เมื่อปิด ให้กลับมามองเห็น
-        if not invisibleActive and player.Character then
-            for _, part in pairs(player.Character:GetDescendants()) do
-                if (part:IsA("BasePart") or part:IsA("Decal")) and part.Name ~= "HumanoidRootPart" then
-                    part.Transparency = 0
-                end
-            end
+            task.wait(1)
         end
     end)
 end)
 
--- [3] Anti-Fling
-local antiFlingActive = false
-local afBtn = Instance.new("TextButton", container)
-afBtn.Size = UDim2.new(0.95, 0, 0, 50); afBtn.Text = "Anti-Fling: OFF";
-afBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); afBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", afBtn).CornerRadius = UDim.new(0, 12)
-
-afBtn.MouseButton1Click:Connect(function()
-    antiFlingActive = not antiFlingActive
-    afBtn.Text = antiFlingActive and "Anti-Fling: ON" or "Anti-Fling: OFF"
-    afBtn.TextColor3 = antiFlingActive and Color3.fromRGB(0, 255, 255) or Color3.fromRGB(255, 255, 255)
-    notify("Anti-Fling", antiFlingActive and "เปิดใช้งานกันกระเด็น" or "ปิดใช้งานกันกระเด็น")
-    
+local invActive = false
+local invBtn = Instance.new("TextButton", container); invBtn.Size = UDim2.new(0.95, 0, 0, 45); invBtn.Text = "Invisibility: OFF";
+invBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); Instance.new("UICorner", invBtn);
+invBtn.MouseButton1Click:Connect(function()
+    invActive = not invActive; invBtn.Text = invActive and "Invis: ON" or "Invisibility: OFF"
     task.spawn(function()
-        while antiFlingActive do
-            if player.Character then
-                for _, p in pairs(player.Character:GetDescendants()) do
-                    if p:IsA("BasePart") then p.Velocity = Vector3.new(0,0,0); p.RotVelocity = Vector3.new(0,0,0) end
-                end
-            end
+        while invActive do
+            if player.Character then for _, p in pairs(player.Character:GetDescendants()) do if (p:IsA("BasePart") or p:IsA("Decal")) and p.Name ~= "HumanoidRootPart" then p.Transparency = 1 end end end
+            task.wait(0.1)
+        end
+        if player.Character then for _, p in pairs(player.Character:GetDescendants()) do if (p:IsA("BasePart") or p:IsA("Decal")) and p.Name ~= "HumanoidRootPart" then p.Transparency = 0 end end end
+    end)
+end)
+
+local afActive = false
+local afBtn = Instance.new("TextButton", container); afBtn.Size = UDim2.new(0.95, 0, 0, 45); afBtn.Text = "Anti-Fling: OFF";
+afBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); Instance.new("UICorner", afBtn);
+afBtn.MouseButton1Click:Connect(function()
+    afActive = not afActive; afBtn.Text = afActive and "Anti-Fling: ON" or "Anti-Fling: OFF"
+    task.spawn(function()
+        while afActive do
+            if player.Character then for _, p in pairs(player.Character:GetDescendants()) do if p:IsA("BasePart") then p.Velocity = Vector3.zero; p.RotVelocity = Vector3.zero end end end
             RunService.Stepped:Wait()
         end
     end)
 end)
 
--- [4] Extra Script (Toggle)
-local exActive = false
-local exBtn = Instance.new("TextButton", container)
-exBtn.Size = UDim2.new(0.95, 0, 0, 50); exBtn.Text = "Extra Script: OFF";
-exBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25); exBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", exBtn).CornerRadius = UDim.new(0, 12)
-
-exBtn.MouseButton1Click:Connect(function()
-    exActive = not exActive
-    exBtn.Text = exActive and "Extra Script: ON" or "Extra Script: OFF"
-    notify("Extra Script", exActive and "รันสคริปต์ Pastebin..." or "ปิดการรันสคริปต์")
-    if exActive then 
-        loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))() 
-    end
-end)
-
--- [5] Exit
-local exitBtn = Instance.new("TextButton", container)
-exitBtn.Size = UDim2.new(0.95, 0, 0, 50); exitBtn.Text = "ปิดสคริปต์ (Exit)";
-exitBtn.BackgroundColor3 = Color3.fromRGB(45, 20, 20); exitBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 12)
-
+local exitBtn = Instance.new("TextButton", container); exitBtn.Size = UDim2.new(0.95, 0, 0, 45); exitBtn.Text = "Exit Script";
+exitBtn.BackgroundColor3 = Color3.fromRGB(50, 20, 20); Instance.new("UICorner", exitBtn);
 exitBtn.MouseButton1Click:Connect(function()
-    notify("Exit", "ปิดการทำงาน BAMBOO BOLT-X")
-    tpActive = false; invisibleActive = false; antiFlingActive = false;
-    mainFrame:TweenSize(UDim2.new(0, 280, 0, 0), "In", "Quart", 0.5, true)
-    task.wait(0.5); screenGui:Destroy()
+    warpActive = false; randomActive = false; espActive = false; invActive = false; afActive = false;
+    mainFrame:TweenSize(UDim2.new(0, 300, 0, 0), "In", "Quart", 0.5, true); task.wait(0.5); screenGui:Destroy()
 end)
