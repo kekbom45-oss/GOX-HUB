@@ -1,5 +1,5 @@
 --[[
-    MM2 PREMIUM SCRIPT (GOX-HUB)
+    BAMBOO BOLT-X HUB (MM2 EDITION)
     Created by: Bamboo_3NgU
     GitHub: https://github.com/kekbom45-oss/GOX-HUB
 ]]
@@ -11,12 +11,12 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 -- [0] Setup & Anti-Duplicate
-if playerGui:FindFirstChild("MM2_Premium_UI") then
-    playerGui:FindFirstChild("MM2_Premium_UI"):Destroy()
+if playerGui:FindFirstChild("Bamboo_BoltX_UI") then
+    playerGui:FindFirstChild("Bamboo_BoltX_UI"):Destroy()
 end
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "MM2_Premium_UI"
+screenGui.Name = "Bamboo_BoltX_UI"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 
@@ -38,7 +38,7 @@ local function applyRainbow(object)
     end)
 end
 
--- [1] Intro Animation: MM2 Rainbow Text
+-- [1] Intro Animation
 local introLabel = Instance.new("TextLabel")
 introLabel.Size = UDim2.new(0, 400, 0, 100)
 introLabel.Position = UDim2.new(0.5, -200, 0.4, 0)
@@ -56,7 +56,7 @@ TweenService:Create(introLabel, TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.
 task.wait(0.8)
 introLabel:Destroy()
 
--- [2] Loading Bar: Green Download
+-- [2] Loading Bar
 local loadFrame = Instance.new("Frame")
 loadFrame.Size = UDim2.new(0, 300, 0, 8)
 loadFrame.Position = UDim2.new(0.5, -150, 0.5, 0)
@@ -68,7 +68,6 @@ Instance.new("UICorner", loadFrame).CornerRadius = UDim.new(1, 0)
 local bar = Instance.new("Frame")
 bar.Size = UDim2.new(0, 0, 1, 0)
 bar.BackgroundColor3 = Color3.fromRGB(0, 255, 120)
-bar.BorderSizePixel = 0
 bar.Parent = loadFrame
 Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 
@@ -76,7 +75,7 @@ bar:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quart", 2, true)
 task.wait(2.2)
 loadFrame:Destroy()
 
--- [3] Ready Alert: Red Explosion (3 Seconds Total)
+-- [3] Ready Alert (Red Explosion)
 local readyLabel = Instance.new("TextLabel")
 readyLabel.Size = UDim2.new(0, 400, 0, 50)
 readyLabel.Position = UDim2.new(0.5, -200, 0.5, -25)
@@ -96,11 +95,11 @@ TweenService:Create(readyLabel, TweenInfo.new(1, Enum.EasingStyle.Exponential, E
 task.wait(1)
 readyLabel:Destroy()
 
--- [4] Main UI Design & Lightning Effect
+-- [4] Main UI Design (ชื่อใหม่: BOLT-X)
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 280, 0, 380)
 mainFrame.Position = UDim2.new(0.5, -140, 0.5, -190)
-mainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+mainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 mainFrame.BorderSizePixel = 0
 mainFrame.ClipsDescendants = true
 mainFrame.Active = true
@@ -116,7 +115,7 @@ uiStroke.Thickness = 3
 uiStroke.Parent = mainFrame
 applyRainbow(uiStroke)
 
--- เอฟเฟกต์สายฟ้าตรงกรอบ
+-- เอฟเฟกต์สายฟ้า
 task.spawn(function()
     while mainFrame and mainFrame.Parent do
         task.wait(math.random(4, 10))
@@ -128,15 +127,14 @@ task.spawn(function()
 end)
 
 local title = Instance.new("TextLabel")
-title.Text = "MM2 PREMIUM HUB"
+title.Text = "BAMBOO BOLT-X"
 title.Size = UDim2.new(1, 0, 0, 50)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.FredokaOne
-title.TextSize = 22
+title.TextSize = 24
 title.Parent = mainFrame
 applyRainbow(title)
 
--- [Credit] ชื่อคนสร้าง Bamboo_3NgU
 local devName = Instance.new("TextLabel")
 devName.Text = "By Bamboo_3NgU"
 devName.Size = UDim2.new(1, 0, 0, 20)
@@ -147,7 +145,6 @@ devName.TextSize = 14
 devName.Parent = mainFrame
 applyRainbow(devName)
 
--- ปุ่มย่อเมนู (X)
 local closeBtn = Instance.new("TextButton")
 closeBtn.Text = "X"
 closeBtn.Size = UDim2.new(0, 30, 0, 30)
@@ -164,7 +161,6 @@ closeBtn.MouseButton1Click:Connect(function()
     mainFrame:TweenSize(minimized and UDim2.new(0, 280, 0, 50) or UDim2.new(0, 280, 0, 380), "Out", "Quart", 0.5, true)
 end)
 
--- ปุ่มฟังก์ชันต่างๆ
 local container = Instance.new("Frame")
 container.Size = UDim2.new(1, -30, 0, 250)
 container.Position = UDim2.new(0, 15, 0, 80)
@@ -176,7 +172,7 @@ layout.Padding = UDim.new(0, 12)
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 layout.Parent = container
 
--- ฟังก์ชันที่ 1: Auto Warp
+-- ฟังก์ชัน 1: Warp
 local tpActive = false
 local tpBtn = Instance.new("TextButton")
 tpBtn.Size = UDim2.new(1, 0, 0, 50)
@@ -202,10 +198,10 @@ tpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- ฟังก์ชันที่ 2: รันสคริปต์จาก Pastebin (ตามที่คุณระบุ)
+-- ฟังก์ชัน 2: รันสคริปต์ใหม่จากลิงก์ 8n5Ptfqn
 local runBtn = Instance.new("TextButton")
 runBtn.Size = UDim2.new(1, 0, 0, 50)
-runBtn.Text = "Execute External Script"
+runBtn.Text = "Run Updated Script"
 runBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 runBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 runBtn.Font = Enum.Font.GothamMedium
@@ -213,11 +209,10 @@ runBtn.Parent = container
 Instance.new("UICorner", runBtn).CornerRadius = UDim.new(0, 12)
 
 runBtn.MouseButton1Click:Connect(function()
-    -- รันสคริปต์ตามที่คุณต้องการ
-    loadstring(game:HttpGet("https://pastebin.com/raw/sY1Y3TpH"))()
+    loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))()
 end)
 
--- ฟังก์ชันที่ 3: ปิดสคริปต์
+-- ฟังก์ชัน 3: ปิดสคริปต์
 local exitBtn = Instance.new("TextButton")
 exitBtn.Size = UDim2.new(1, 0, 0, 50)
 exitBtn.Text = "Exit Script"
