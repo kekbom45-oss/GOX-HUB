@@ -1,125 +1,138 @@
--- [[ FAKE DONATION COMMANDER - GOLD EDITION ]] --
--- วิธีใช้: ก๊อปปี้สคริปต์นี้ไปวางใน LocalScript หรือ Executor แล้วกดรัน
+-- [[ GOLDEN FAKE DONATION - ALL-IN-ONE SCRIPT ]] --
+-- Copy and run this in your Executor or LocalScript
 
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local PlayerGui = player:WaitForChild("PlayerGui")
+local lp = Players.LocalPlayer
+local PlayerGui = lp:WaitForChild("PlayerGui")
 
--- 1. สร้างหน้าจอ UI สำหรับกรอกข้อมูล (Control Panel)
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "DonationControl"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = PlayerGui
+-- สร้าง Main UI สำหรับกรอกตัวเลข
+local MainGui = Instance.new("ScreenGui")
+MainGui.Name = "FakeDonateHub"
+MainGui.Parent = PlayerGui
 
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 250, 0, 150)
-mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-mainFrame.BorderSizePixel = 2
-mainFrame.Active = true
-mainFrame.Draggable = true -- ทำให้ลากไปมาได้
-mainFrame.Parent = screenGui
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 260, 0, 160)
+Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = MainGui
 
-local uiCorner = Instance.new("UICorner")
-uiCorner.Parent = mainFrame
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 10)
+Corner.Parent = Frame
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "FAKE DONATE MENU"
-title.TextColor3 = Color3.new(1, 1, 1)
-title.BackgroundTransparency = 1
-title.Font = Enum.Font.SourceSansBold
-title.Parent = mainFrame
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "DONATION COMMANDER"
+Title.TextColor3 = Color3.fromRGB(212, 175, 55)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.Parent = Frame
 
-local input = Instance.new("TextBox")
-input.Size = UDim2.new(0.8, 0, 0, 40)
-input.Position = UDim2.new(0.1, 0, 0.3, 0)
-input.PlaceholderText = "จำนวนเงิน..."
-input.Text = ""
-input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-input.TextColor3 = Color3.new(1, 1, 1)
-input.Parent = mainFrame
+local Input = Instance.new("TextBox")
+Input.Size = UDim2.new(0.8, 0, 0, 35)
+Input.Position = UDim2.new(0.1, 0, 0.35, 0)
+Input.PlaceholderText = "Enter Amount (Robux)..."
+Input.Text = ""
+Input.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Input.TextColor3 = Color3.new(1, 1, 1)
+Input.Font = Enum.Font.Gotham
+Input.Parent = Frame
 
-local runBtn = Instance.new("TextButton")
-runBtn.Size = UDim2.new(0.8, 0, 0, 40)
-runBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
-runBtn.Text = "RUN DONATION"
-runBtn.BackgroundColor3 = Color3.fromRGB(212, 175, 55) -- สีทอง
-runBtn.TextColor3 = Color3.new(1, 1, 1)
-runBtn.Font = Enum.Font.SourceSansBold
-runBtn.Parent = mainFrame
+local RunBtn = Instance.new("TextButton")
+RunBtn.Size = UDim2.new(0.8, 0, 0, 40)
+RunBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
+RunBtn.Text = "RUN DONATION"
+RunBtn.BackgroundColor3 = Color3.fromRGB(212, 175, 55)
+RunBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+RunBtn.Font = Enum.Font.GothamBold
+RunBtn.TextSize = 14
+RunBtn.Parent = Frame
 
---- ฟังก์ชันสร้างเอฟเฟกต์ประกาศสีทอง (แบบที่คุณต้องการ) ---
-local function playGrandDonation(donatorName, amount)
-    local announceGui = Instance.new("ScreenGui")
-    announceGui.Parent = PlayerGui
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.Parent = RunBtn
 
-    local alert = Instance.new("Frame")
-    alert.Size = UDim2.new(0, 0, 0, 120)
-    alert.Position = UDim2.new(0.5, 0, 0.3, 0)
-    alert.AnchorPoint = Vector2.new(0.5, 0.5)
-    alert.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
-    alert.BorderSizePixel = 0
-    alert.ClipsDescendants = false
-    alert.Parent = announceGui
+--- [[ ระบบประกาศสีทองอลังการ ]] ---
+local function TriggerEffect(donator, amount)
+    local EffectGui = Instance.new("ScreenGui")
+    EffectGui.Parent = PlayerGui
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 15)
-    corner.Parent = alert
+    local Alert = Instance.new("Frame")
+    Alert.Size = UDim2.new(0, 0, 0, 120) -- เริ่มจาก 0 เพื่อ Tween
+    Alert.Position = UDim2.new(0.5, 0, 0.3, 0)
+    Alert.AnchorPoint = Vector2.new(0.5, 0.5)
+    Alert.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+    Alert.BorderSizePixel = 0
+    Alert.Parent = EffectGui
 
-    local gradient = Instance.new("UIGradient")
-    gradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 240, 100)),
+    local AlertCorner = Instance.new("UICorner")
+    AlertCorner.CornerRadius = UDim.new(0, 20)
+    AlertCorner.Parent = Alert
+
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 250, 150)),
         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 215, 0)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 240, 100))
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 250, 150))
     })
-    gradient.Parent = alert
+    Gradient.Parent = Alert
 
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(1, 0, 1, 0)
-    text.BackgroundTransparency = 1
-    text.Text = "🌟 " .. donatorName .. " DONATED R$ " .. amount .. " 🌟"
-    text.TextColor3 = Color3.new(1, 1, 1)
-    text.TextSize = 35
-    text.Font = Enum.Font.LuckiestGuy
-    text.TextStrokeTransparency = 0
-    text.Parent = alert
+    local Msg = Instance.new("TextLabel")
+    Msg.Size = UDim2.new(1, 0, 1, 0)
+    Msg.BackgroundTransparency = 1
+    Msg.Text = "⭐ " .. donator:upper() .. " DONATED R$ " .. amount .. " ⭐"
+    Msg.TextColor3 = Color3.new(1, 1, 1)
+    Msg.TextSize = 35
+    Msg.Font = Enum.Font.LuckiestGuy
+    Msg.TextStrokeTransparency = 0
+    Msg.TextStrokeColor3 = Color3.fromRGB(120, 80, 0)
+    Msg.Parent = Alert
 
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://6341513552"
-    sound.Parent = alert
-    sound:Play()
+    local Sound = Instance.new("Sound")
+    Sound.SoundId = "rbxassetid://6341513552"
+    Sound.Parent = Alert
+    Sound:Play()
 
-    -- Animation: เด้งออกมา
-    TweenService:Create(alert, TweenInfo.new(0.6, Enum.EasingStyle.Back), {Size = UDim2.new(0, 600, 0, 130)}):Play()
+    -- Animation: ขยายกรอบประกาศ
+    TweenService:Create(Alert, TweenInfo.new(0.6, Enum.EasingStyle.Back), {Size = UDim2.new(0, 650, 0, 130)}):Play()
 
-    -- เอฟเฟกต์เงินพุ่ง
+    -- สร้าง Particle เงินพุ่ง
     task.delay(0.6, function()
-        local emitter = Instance.new("ParticleEmitter")
-        emitter.Texture = "rbxassetid://241685484"
-        emitter.Rate = 200
-        emitter.Speed = NumberRange.new(150, 300)
-        emitter.SpreadAngle = Vector2.new(360, 360)
-        emitter.Parent = alert
-        task.wait(0.3)
-        emitter.Enabled = false
+        local Emitter = Instance.new("ParticleEmitter")
+        Emitter.Texture = "rbxassetid://241685484" -- รูปเหรียญ
+        Emitter.Rate = 250
+        Emitter.Speed = NumberRange.new(200, 400)
+        Emitter.Lifetime = NumberRange.new(1, 2)
+        Emitter.SpreadAngle = Vector2.new(360, 360)
+        Emitter.Parent = Alert
+        
+        task.wait(0.4)
+        Emitter.Enabled = false
     end)
 
+    -- ลบประกาศเมื่อจบเวลา
     task.wait(5)
-    alert:Destroy()
-    announceGui:Destroy()
+    local Close = TweenService:Create(Alert, TweenInfo.new(0.5), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
+    Close:Play()
+    Close.Completed:Connect(function() EffectGui:Destroy() end)
 end
 
--- เมื่อกดปุ่ม RUN
-runBtn.MouseButton1Click:Connect(function()
-    local val = input.Text
+-- เชื่อมปุ่มเข้ากับฟังก์ชัน
+RunBtn.MouseButton1Click:Connect(function()
+    local val = Input.Text
     if val ~= "" and tonumber(val) then
-        -- หมายเหตุ: ถ้าใช้สคริปต์นี้รันในแมพคนอื่น คนอื่นจะไม่เห็น
-        -- แต่ถ้าใส่ไว้ใน Server Script ใน Studio ทุกคนจะเห็น
-        playGrandDonation(player.Name, val)
+        TriggerEffect(lp.Name, val)
+        -- หมายเหตุ: ถ้าใช้ในแมพคนอื่น คุณจะเห็นคนเดียว (เพราะเป็น LocalScript)
+    else
+        Input.Text = "Please enter number!"
+        task.wait(1)
+        Input.Text = ""
     end
 end)
 
-print("Donation Script Loaded! กรอกตัวเลขในเมนูได้เลยครับ")
+print("Golden Donation Loaded! - Use the UI to donate.")
