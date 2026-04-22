@@ -2,11 +2,10 @@
     MM2 BY GOX HUB - OFFICIAL FREE VERSION
     - X = ปิดสคริปต์ถาวร
     - ⬜ = ย่อเมนูเป็นวงกลม MM2 สายรุ้ง
-    - Intro: Rainbow Title & Click to Start
+    - Intro: Transparent Rainbow Text & Click to Start
 ]]
 
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -37,37 +36,38 @@ local function applyRainbow(object)
     end)
 end
 
--- [1] INTRO SYSTEM (หน้าจอคลุมดำ)
-local introFrame = Instance.new("Frame", screenGui)
-introFrame.Size = UDim2.new(1, 0, 1, 0)
-introFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-introFrame.ZIndex = 10
+-- [1] INTRO SYSTEM (แบบไม่มีจอสีดำ)
+local introContainer = Instance.new("Frame", screenGui)
+introContainer.Size = UDim2.new(0, 400, 0, 200)
+introContainer.Position = UDim2.new(0.5, -200, 0.4, -100)
+introContainer.BackgroundTransparency = 1 -- ไม่มีพื้นหลังสีดำ
 
-local introTitle = Instance.new("TextLabel", introFrame)
-introTitle.Size = UDim2.new(0, 400, 0, 100)
-introTitle.Position = UDim2.new(0.5, -200, 0.4, 0)
+local introTitle = Instance.new("TextLabel", introContainer)
+introTitle.Size = UDim2.new(1, 0, 0, 100)
+introTitle.Position = UDim2.new(0, 0, 0, 0)
 introTitle.BackgroundTransparency = 1
 introTitle.Text = "MM2 BY GOX HUB"
 introTitle.Font = Enum.Font.FredokaOne
-introTitle.TextSize = 50
+introTitle.TextSize = 55
 applyRainbow(introTitle)
 
-local startBtn = Instance.new("TextButton", introFrame)
+local startBtn = Instance.new("TextButton", introContainer)
 startBtn.Size = UDim2.new(0, 200, 0, 50)
 startBtn.Position = UDim2.new(0.5, -100, 0.6, 0)
-startBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+startBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 startBtn.Text = "กดเพื่อไปต่อ"
 startBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 startBtn.Font = Enum.Font.GothamBold
 startBtn.TextSize = 18
 Instance.new("UICorner", startBtn)
+local btnStroke = Instance.new("UIStroke", startBtn); btnStroke.Thickness = 2; applyRainbow(btnStroke)
 
--- [2] MAIN UI (แนวนอน)
+-- [2] MAIN UI STRUCTURE (แนวนอน)
 local mainFrame = Instance.new("Frame", screenGui)
 mainFrame.Size = UDim2.new(0, 550, 0, 160)
 mainFrame.Position = UDim2.new(0.5, -275, 0.8, -80)
 mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-mainFrame.Visible = false -- ซ่อนไว้ก่อนกด Start
+mainFrame.Visible = false 
 mainFrame.Active = true; mainFrame.Draggable = true
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 15)
 local mainStroke = Instance.new("UIStroke", mainFrame); mainStroke.Thickness = 2; applyRainbow(mainStroke)
@@ -78,42 +78,35 @@ menuTitle.Text = "Mm2 by gox hub"
 menuTitle.Size = UDim2.new(0, 200, 0, 25)
 menuTitle.Position = UDim2.new(0, 15, 0, 10)
 menuTitle.BackgroundTransparency = 1
-menuTitle.Font = Enum.Font.FredokaOne
-menuTitle.TextSize = 18
-menuTitle.TextXAlignment = Enum.TextXAlignment.Left
+menuTitle.Font = Enum.Font.FredokaOne; menuTitle.TextSize = 18; menuTitle.TextXAlignment = Enum.TextXAlignment.Left
 applyRainbow(menuTitle)
 
 local subTitle = Instance.new("TextLabel", mainFrame)
 subTitle.Text = "แจกฟรีไม่ได้ขายต่อ"
-subTitle.Size = UDim2.new(0, 200, 0, 15)
-subTitle.Position = UDim2.new(0, 15, 0, 30)
-subTitle.BackgroundTransparency = 1
-subTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
-subTitle.Font = Enum.Font.Gotham
-subTitle.TextSize = 10
-subTitle.TextXAlignment = Enum.TextXAlignment.Left
+subTitle.Size = UDim2.new(0, 200, 0, 15); subTitle.Position = UDim2.new(0, 15, 0, 30); subTitle.BackgroundTransparency = 1
+subTitle.TextColor3 = Color3.fromRGB(200, 200, 200); subTitle.Font = Enum.Font.Gotham; subTitle.TextSize = 10; subTitle.TextXAlignment = Enum.TextXAlignment.Left
 
 -- [Control Buttons]
-local miniBtn = Instance.new("TextButton", screenGui) -- วงกลม MM2 สายรุ้ง
+local miniBtn = Instance.new("TextButton", screenGui) 
 miniBtn.Size = UDim2.new(0, 65, 0, 65); miniBtn.Position = UDim2.new(0, 20, 0.5, -32)
 miniBtn.BackgroundColor3 = Color3.fromRGB(10, 10, 10); miniBtn.Text = "MM2"
 miniBtn.Font = Enum.Font.FredokaOne; miniBtn.TextSize = 22; miniBtn.Visible = false
 Instance.new("UICorner", miniBtn).CornerRadius = UDim.new(1, 0)
 applyRainbow(miniBtn)
 
-local closeBtn = Instance.new("TextButton", mainFrame) -- X ปิด
+local closeBtn = Instance.new("TextButton", mainFrame)
 closeBtn.Size = UDim2.new(0, 30, 0, 30); closeBtn.Position = UDim2.new(1, -40, 0, 10)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0); closeBtn.Text = "X"; closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", closeBtn)
 
-local miniHeaderBtn = Instance.new("TextButton", mainFrame) -- ⬜ ย่อ
+local miniHeaderBtn = Instance.new("TextButton", mainFrame)
 miniHeaderBtn.Size = UDim2.new(0, 30, 0, 30); miniHeaderBtn.Position = UDim2.new(1, -80, 0, 10)
 miniHeaderBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50); miniHeaderBtn.Text = "⬜"; miniHeaderBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", miniHeaderBtn)
 
 -- Logic กดยืนยัน Intro
 startBtn.MouseButton1Click:Connect(function()
-    introFrame:Destroy()
+    introContainer:Destroy()
     mainFrame.Visible = true
 end)
 
@@ -123,18 +116,18 @@ miniBtn.MouseButton1Click:Connect(function() mainFrame.Visible = true; miniBtn.V
 
 -- [3] FUNCTIONS LIST
 local scroll = Instance.new("ScrollingFrame", mainFrame)
-scroll.Size = UDim2.new(1, -20, 1, -70); scroll.Position = UDim2.new(0, 10, 0, 60)
+scroll.Size = UDim2.new(1, -20, 1, -70); scroll.Position = UDim2.new(0, 10, 0, 65)
 scroll.BackgroundTransparency = 1; scroll.ScrollBarThickness = 0; scroll.CanvasSize = UDim2.new(3, 0, 0, 0)
 local layout = Instance.new("UIListLayout", scroll); layout.FillDirection = Enum.FillDirection.Horizontal; layout.Padding = UDim.new(0, 10); layout.VerticalAlignment = Enum.VerticalAlignment.Center
 
 local function createBtn(text, color)
     local btn = Instance.new("TextButton", scroll)
-    btn.Size = UDim2.new(0, 140, 0, 80); btn.Text = text; btn.BackgroundColor3 = color; btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Size = UDim2.new(0, 140, 0, 75); btn.Text = text; btn.BackgroundColor3 = color; btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Font = Enum.Font.GothamBold; btn.TextSize = 13; btn.TextWrapped = true; Instance.new("UICorner", btn)
     return btn
 end
 
--- ฟังก์ชันทั้งหมด
+-- ฟังก์ชันใช้งาน
 createBtn("⭐ เตะผู้เล่นอื่น\n(Pastebin)", Color3.fromRGB(80, 20, 20)).MouseButton1Click:Connect(function()
     pcall(function() loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))() end)
 end)
@@ -169,5 +162,5 @@ createBtn("👁️ ESP Roles", Color3.fromRGB(40, 40, 40))
 createBtn("🎯 Silent Aim", Color3.fromRGB(40, 40, 40))
 createBtn("🛡️ Anti-Troll Kick\n(Active)", Color3.fromRGB(0, 80, 50))
 
--- [4] ระบบกันเตะเบื้องต้น
+-- กันเตะเบื้องต้น
 hookfunction(player.Kick, function() return nil end)
