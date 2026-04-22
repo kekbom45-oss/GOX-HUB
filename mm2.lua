@@ -1,7 +1,8 @@
 --[[
-    ============================================================
-    MM2 BY GOX HUB - ANIMATED ULTIMATE EDITION
-    ============================================================
+    MM2 BY GOX HUB - THE ULTIMATE ANIMATED (FULL VERSION)
+    - Integrated Functions: Intro, Notify, Silent Aim, ESP, Invis, Kick
+    - Added Functions: Speed 60 (Smooth), Reflect (GitHub), Warp (GitHub)
+    - UI: Advanced Animations, Draggable Mini Button (Glitch-Free)
 ]]
 
 local Players = game:GetService("Players")
@@ -11,10 +12,12 @@ local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 local playerGui = player:WaitForChild("PlayerGui")
 
-if playerGui:FindFirstChild("GoxHub_Final") then playerGui.GoxHub_Final:Destroy() end
+if playerGui:FindFirstChild("GoxHub_MM2_Final") then
+    playerGui:FindFirstChild("GoxHub_MM2_Final"):Destroy()
+end
 
 local screenGui = Instance.new("ScreenGui", playerGui)
-screenGui.Name = "GoxHub_Final"
+screenGui.Name = "GoxHub_MM2_Final"
 screenGui.ResetOnSpawn = false
 
 local function applyRainbow(object)
@@ -24,29 +27,35 @@ local function applyRainbow(object)
             hue = hue + (1/400)
             if hue > 1 then hue = 0 end
             local color = Color3.fromHSV(hue, 0.7, 1)
-            if object:IsA("TextLabel") or object:IsA("TextButton") then object.TextColor3 = color
-            elseif object:IsA("UIStroke") then object.Color = color end
+            if object:IsA("TextLabel") or object:IsA("TextButton") then 
+                object.TextColor3 = color
+            elseif object:IsA("UIStroke") then 
+                object.Color = color 
+            end
             task.wait()
         end
     end)
 end
 
-local function Notify(title, text)
+local function Notify(title, text, duration)
     local notifyFrame = Instance.new("Frame", screenGui)
-    notifyFrame.Size = UDim2.new(0, 250, 0, 70)
+    notifyFrame.Size = UDim2.new(0, 250, 0, 75)
     notifyFrame.Position = UDim2.new(1, 10, 0, 30)
     notifyFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     Instance.new("UICorner", notifyFrame)
-    local nStroke = Instance.new("UIStroke", notifyFrame); nStroke.Thickness = 2; applyRainbow(nStroke)
+    local stroke = Instance.new("UIStroke", notifyFrame); stroke.Thickness = 2; applyRainbow(stroke)
+
     local tLabel = Instance.new("TextLabel", notifyFrame)
     tLabel.Text = title; tLabel.Size = UDim2.new(1, -20, 0, 25); tLabel.Position = UDim2.new(0, 10, 0, 8)
     tLabel.BackgroundTransparency = 1; tLabel.Font = Enum.Font.FredokaOne; tLabel.TextSize = 18; applyRainbow(tLabel)
+
     local mLabel = Instance.new("TextLabel", notifyFrame)
-    mLabel.Text = text; mLabel.Size = UDim2.new(1, -20, 0, 30); mLabel.Position = UDim2.new(0, 10, 0, 35)
-    mLabel.BackgroundTransparency = 1; mLabel.TextColor3 = Color3.fromRGB(255, 255, 255); mLabel.Font = Enum.Font.Gotham; mLabel.TextSize = 14
+    mLabel.Text = text; mLabel.Size = UDim2.new(1, -20, 0, 35); mLabel.Position = UDim2.new(0, 10, 0, 32)
+    mLabel.BackgroundTransparency = 1; mLabel.TextColor3 = Color3.fromRGB(255, 255, 255); mLabel.Font = Enum.Font.Gotham; mLabel.TextSize = 14; mLabel.TextWrapped = true
+
     notifyFrame:TweenPosition(UDim2.new(1, -270, 0, 30), "Out", "Back", 0.5, true)
-    task.delay(3, function()
-        notifyFrame:TweenPosition(UDim2.new(1, 10, 0, 30), "In", "Quad", 0.5, true)
+    task.delay(duration or 3, function()
+        notifyFrame:TweenPosition(UDim2.new(1, 10, 0, 20), "In", "Quad", 0.5, true)
         task.wait(0.5); notifyFrame:Destroy()
     end)
 end
@@ -62,10 +71,14 @@ startBtn.Font = Enum.Font.GothamBold; startBtn.TextSize = 18; Instance.new("UICo
 local bStroke = Instance.new("UIStroke", startBtn); bStroke.Thickness = 3; applyRainbow(bStroke)
 
 local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 300, 0, 530); mainFrame.Position = UDim2.new(0.5, -150, 0.5, -265)
+mainFrame.Size = UDim2.new(0, 300, 0, 520); mainFrame.Position = UDim2.new(0.5, -150, 0.5, -260)
 mainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12); mainFrame.Visible = false; mainFrame.Active = true; mainFrame.Draggable = true; mainFrame.ClipsDescendants = true
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 15)
 local mStroke = Instance.new("UIStroke", mainFrame); mStroke.Thickness = 2.5; applyRainbow(mStroke)
+
+local mTitle = Instance.new("TextLabel", mainFrame)
+mTitle.Text = "Mm2 by gox hub"; mTitle.Size = UDim2.new(0, 200, 0, 30); mTitle.Position = UDim2.new(0, 15, 0, 15)
+mTitle.BackgroundTransparency = 1; mTitle.Font = Enum.Font.FredokaOne; mTitle.TextSize = 20; mTitle.TextXAlignment = "Left"; applyRainbow(mTitle)
 
 local miniBtn = Instance.new("TextButton", screenGui)
 miniBtn.Size = UDim2.new(0, 65, 0, 65); miniBtn.Position = UDim2.new(0, 20, 0.5, -32)
@@ -78,23 +91,16 @@ miniBtn.MouseButton1Down:Connect(function() dragStartPos = miniBtn.Position; isD
 miniBtn.MouseButton1Up:Connect(function()
     if dragStartPos then
         local delta = (Vector2.new(miniBtn.Position.X.Offset, miniBtn.Position.Y.Offset) - Vector2.new(dragStartPos.X.Offset, dragStartPos.Y.Offset)).Magnitude
-        isDragging = delta > 5
+        isDragging = delta > 8
     end
 end)
 miniBtn.MouseButton1Click:Connect(function()
     if not isDragging then
         mainFrame.Visible = true
         mainFrame.Size = UDim2.new(0, 300, 0, 0)
-        TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 300, 0, 530)}):Play()
+        TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0, 300, 0, 520)}):Play()
         miniBtn.Visible = false
     end
-end)
-
-startBtn.MouseButton1Click:Connect(function()
-    introLabel:Destroy(); startBtn:Destroy(); mainFrame.Visible = true
-    mainFrame.Size = UDim2.new(0, 300, 0, 0)
-    TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Back), {Size = UDim2.new(0, 300, 0, 530)}):Play()
-    Notify("GOX HUB", "สคริปต์เริ่มทำงานแล้ว!")
 end)
 
 local scroll = Instance.new("ScrollingFrame", mainFrame)
@@ -108,18 +114,66 @@ local function createBtn(text, color, callback)
     return btn
 end
 
+local lockEnabled = false
+local lockBtn = createBtn("🎯 ล็อกเป้าฆาตกร: OFF", Color3.fromRGB(40, 40, 40), function()
+    lockEnabled = not lockEnabled
+    Notify("Silent Aim", lockEnabled and "เปิดใช้งาน (ต้องถือปืน)" or "ปิดการใช้งาน")
+end)
+
+local espEnabled = false
+createBtn("👁️ มองบทบาท (ESP)", Color3.fromRGB(40, 40, 40), function()
+    espEnabled = not espEnabled
+    Notify("ESP", espEnabled and "เริ่มมองเห็นบทบาท" or "ปิดการมองเห็น")
+    task.spawn(function()
+        while espEnabled do
+            for _, v in pairs(Players:GetPlayers()) do
+                if v ~= player and v.Character then
+                    local h = v.Character:FindFirstChild("GoxESP") or Instance.new("Highlight", v.Character)
+                    h.Name = "GoxESP"
+                    if v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife") then h.FillColor = Color3.new(1,0,0)
+                    elseif v.Backpack:FindFirstChild("Gun") or v.Character:FindFirstChild("Gun") then h.FillColor = Color3.new(0,0,1)
+                    else h.FillColor = Color3.new(0,1,0) end
+                end
+            end
+            task.wait(1)
+        end
+        for _, v in pairs(Players:GetPlayers()) do if v.Character and v.Character:FindFirstChild("GoxESP") then v.Character.GoxESP:Destroy() end end
+    end)
+end)
+
 local speedActive = false
 local speedBtn = createBtn("🏃 วิ่งเร็ว (Speed 60): OFF", Color3.fromRGB(40, 40, 40), function()
     speedActive = not speedActive
-    Notify("Speed", speedActive and "เปิดความเร็ว 60" or "ปิดความเร็ว 60")
 end)
 RunService.Heartbeat:Connect(function()
     if speedActive and player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.WalkSpeed = 60
-        speedBtn.Text = "🏃 วิ่งเร็ว (Speed 60): ON"; speedBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
+        speedBtn.Text = "🏃 วิ่งเร็ว (Speed 60): ON"; speedBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
     else
+        if player.Character and player.Character:FindFirstChild("Humanoid") then player.Character.Humanoid.WalkSpeed = 16 end
         speedBtn.Text = "🏃 วิ่งเร็ว (Speed 60): OFF"; speedBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     end
+end)
+
+local invisActive = false
+createBtn("👻 หายตัว (Invis)", Color3.fromRGB(40, 40, 40), function()
+    invisActive = not invisActive
+    Notify("Invis", invisActive and "เปิดโหมดหายตัว" or "ปิดโหมดหายตัว")
+    task.spawn(function()
+        while invisActive do
+            if player.Character then
+                for _, v in pairs(player.Character:GetDescendants()) do
+                    if (v:IsA("BasePart") or v:IsA("Decal")) and v.Name ~= "HumanoidRootPart" then v.Transparency = 1 end
+                end
+            end
+            task.wait(0.1)
+        end
+        if player.Character then
+            for _, v in pairs(player.Character:GetDescendants()) do
+                if (v:IsA("BasePart") or v:IsA("Decal")) and v.Name ~= "HumanoidRootPart" then v.Transparency = 0 end
+            end
+        end
+    end)
 end)
 
 createBtn("🛡️ สะท้อนการเตะ (Reflect)", Color3.fromRGB(120, 60, 0), function()
@@ -130,31 +184,46 @@ createBtn("🌀 ระบบวาร์ป (GitHub)", Color3.fromRGB(0, 60, 120
     pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kekbom45-oss/GOX-HUB/main/Wa.lua"))() end)
 end)
 
-local lockOn = false
-createBtn("🎯 Silent Aim ฆาตกร", Color3.fromRGB(30, 30, 30), function()
-    lockOn = not lockOn
-    Notify("Silent Aim", lockOn and "เปิดล็อกเป้า" or "ปิดล็อกเป้า")
+createBtn("⭐ เตะผู้เล่นอื่น", Color3.fromRGB(80, 20, 20), function()
+    pcall(function() loadstring(game:HttpGet("https://pastebin.com/raw/8n5Ptfqn"))() end)
 end)
 
-local mt = getrawmetatable(game); local oldNm = mt.__namecall; setreadonly(mt, false)
+createBtn("❌ ปิดสคริปต์", Color3.fromRGB(50, 50, 50), function() screenGui:Destroy() end)
+createBtn("➖ ย่อหน้าต่าง", Color3.fromRGB(50, 50, 50), function() 
+    local t = TweenService:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Size = UDim2.new(0, 300, 0, 0)})
+    t:Play(); t.Completed:Connect(function() mainFrame.Visible = false; miniBtn.Visible = true end)
+end)
+
+startBtn.MouseButton1Click:Connect(function()
+    introLabel:Destroy(); startBtn:Destroy()
+    mainFrame.Visible = true
+    mainFrame.Size = UDim2.new(0, 300, 0, 0)
+    TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 300, 0, 520)}):Play()
+    Notify("GOX HUB", "สคริปต์เริ่มทำงานแล้ว!")
+end)
+
+hookfunction(player.Kick, function() return nil end)
+local mt = getrawmetatable(game); local oldNamecall = mt.__namecall; setreadonly(mt, false)
 mt.__namecall = newcclosure(function(self, ...)
     local method = getnamecallmethod()
     if (method == "FireServer" or method == "InvokeServer") and tostring(self):find("Remote") then
         local args = {...}
         if args[1] == "KickPlayer" or args[1] == "Crash" then return nil end
     end
-    return oldNm(self, ...)
+    return oldNamecall(self, ...)
 end)
 setreadonly(mt, true)
-hookfunction(player.Kick, function() return nil end)
 
-local oldIdx; oldIdx = hookmetamethod(game, "__index", function(self, k)
-    if lockOn and self == mouse and k == "Hit" then
-        for _, v in pairs(Players:GetPlayers()) do
-            if v.Character and (v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife")) then
-                return v.Character.Head.CFrame
+local oldIndex; oldIndex = hookmetamethod(game, "__index", function(self, k)
+    if lockEnabled and self == mouse and k == "Hit" then
+        local hasGun = player.Character and (player.Character:FindFirstChild("Gun") or player.Backpack:FindFirstChild("Gun"))
+        if hasGun then
+            for _, v in pairs(Players:GetPlayers()) do
+                if v.Character and (v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife")) then
+                    return v.Character.Head.CFrame
+                end
             end
         end
     end
-    return oldIdx(self, k)
+    return oldIndex(self, k)
 end)
